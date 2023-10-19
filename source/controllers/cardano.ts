@@ -27,19 +27,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       stakeWallet.stakeCreds
     );
 
-    console.log('scriptMainnetAddr: ', scriptMainnetAddr);
-
-    const beneficiaryWithStake = new Address(
-      "mainnet",
-      beneficiary.paymentCreds,
-      stakeWallet.stakeCreds
-    );
-
-    console.log('beneficiaryWithStake: ', beneficiaryWithStake.toJson());
-
-    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.lovelaces > 1_000_000);
-
-    console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
+    console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
 
     // const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
 
@@ -85,11 +73,19 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     // console.log('utxosToSpend: ', utxosToSpend);
 
-    const paymentPrivateKey = cli.utils.readPrivateKey("/tokens/payment.skey");
+    const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
 
-    // const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.lovelaces > 1_000_000);
+    const beneficiaryWithStake = new Address(
+      "mainnet",
+      beneficiary.paymentCreds,
+      stakeWallet.stakeCreds
+    );
 
-    // console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
+    console.log('beneficiaryWithStake: ', beneficiaryWithStake.toJson());
+
+    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.lovelaces > 1_000_000);
+
+    console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO?.toJson());
 
     // const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces - 2_000_000n;
 
