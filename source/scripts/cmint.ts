@@ -1,5 +1,5 @@
 import { Tx, Script, Address, isData, UTxO, DataB, DataI, Value, pBSToData, pByteString, pIntToData, Hash28 } from "@harmoniclabs/plu-ts";
-import { script, scriptMainnetAddr, beneficiary, beneficiaryWithStake } from "../contracts/stakeContract";
+import { script, scriptMainnetAddr, beneficiary } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
 import VestingDatum from "../VestingDatum";
 
