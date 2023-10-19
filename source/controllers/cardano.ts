@@ -1,13 +1,13 @@
 /** source/controllers/posts.ts */
 import { Request, Response, NextFunction } from "express";
-import { Tx, Script, Address, isData, UTxO, DataB, DataI, Value, pBSToData, pByteString, pIntToData, Hash28, PaymentCredentials ,StakeCredentials} from "@harmoniclabs/plu-ts";
-import { scriptMainnetAddr, beneficiary, beneficiaryWithStake } from "../contracts/stakeContract";
+import { Tx, Script, Address, isData, UTxO, DataB, DataI, Value, pBSToData, pByteString, pIntToData, Hash28, PaymentCredentials, StakeCredentials } from "@harmoniclabs/plu-ts";
+import { beneficiary, beneficiaryWithStake } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
 
 const mint = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body: any = req.body;
-    
+
     const userAddrs = [Address.fromString(body.data.addr)];
 
     userAddrs.map(addr => {
@@ -20,7 +20,13 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const script = cli.utils.readScript("./mainnet/stakeContract.plutus.json");
 
-    const scriptMainnetAddr = Address.fromString('addr1z9r50tp2a8yyt42stv9dukh53z74qfr0arx2az54helsuhppvv7gwasnw0nw4cdzquzz7l6k8azs34w3j29d8glev64qsr5u64');
+    const scriptMainnetAddr = new Address(
+      "mainnet",
+      PaymentCredentials.script(script.hash)
+    );
+
+    console.log(scriptMainnetAddr);
+
     const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
 
     // const utxosToSpend = (await cli.query.utxo({ address: scriptMainnetAddr }))
