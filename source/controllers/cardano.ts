@@ -122,6 +122,18 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           ]),
         },
       ],
+      mints: [{
+        value: new Value([
+          {
+            policy,
+            assets: { "stADA": BigInt(mintAmount) },
+          }
+        ]),
+        script: {
+          inline: cli.utils.readScript("./tokens/policy/policy.script"),
+          redeemer: new DataI(0)
+        }
+      }],
       changeAddress: beneficiaryWithStake,
     });
 
