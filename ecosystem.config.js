@@ -15,7 +15,7 @@ module.exports = {
     {
       name: 'helix-cardano-node',
       script: 'cardano-node',
-      args: 'run --config $HOME/cardano/mainnet/config.json --database-path $HOME/cardano/mainnet/db/ --socket-path $HOME/cardano/mainnet/db/node.socket --host-addr 0.0.0.0 --port 1337 --topology $HOME/cardano/mainnet/topology.json',
+      args: 'run --config /home/admin/cardano/mainnet/config.json --database-path /home/admin/cardano/mainnet/db/ --socket-path /home/admin/cardano/mainnet/db/node.socket --host-addr 0.0.0.0 --port 1337 --topology /home/admin/cardano/mainnet/topology.json',
       autorestart: true,
       max_restarts: 5,
       min_uptime: '10s',
