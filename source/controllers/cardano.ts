@@ -75,6 +75,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
     const policyPrivateKey = cli.utils.readPrivateKey("./tokens/policy/policy.skey");
+    const policyScript = cli.utils.readScript("./tokens/policy/policy.script");
 
     const beneficiaryWithStake = new Address(
       "mainnet",
@@ -126,11 +127,11 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
         value: new Value([
           {
             policy,
-            assets: { "stADA": BigInt(mintAmount) },
+            assets: { [tokenName]: BigInt(mintAmount) },
           }
         ]),
         script: {
-          inline: cli.utils.readScript("./tokens/policy/policy.script"),
+          inline: policyScript,
           redeemer: new DataI(0)
         }
       }],
