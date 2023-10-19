@@ -1,7 +1,7 @@
 /** source/controllers/posts.ts */
 import { Request, Response, NextFunction } from "express";
-import { Tx, Script, Address, isData, UTxO, DataB, DataI, Value, pBSToData, pByteString, pIntToData, Hash28 } from "@harmoniclabs/plu-ts";
-import { scriptMainnetAddr, beneficiary, beneficiaryWithStake } from "../contracts/stakeContract";
+import { Tx, Script, Address, isData, UTxO, DataB, DataI, Value, pBSToData, pByteString, pIntToData, Hash28, PaymentCredentials } from "@harmoniclabs/plu-ts";
+import { beneficiary, beneficiaryWithStake } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
 
 const mint = async (req: Request, res: Response, next: NextFunction) => {
@@ -18,7 +18,13 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('beneficiary: ', beneficiary.paymentCreds.hash.toString());
 
-    // const scriptMainnetAddr = cli.utils.readAddress("/home/admin/tokens/script.addr");
+    const script = cli.utils.readScript("./mainnet/stakeContract.plutus.json");
+
+    const scriptMainnetAddr = new Address(
+        "mainnet",
+        PaymentCredentials.script( script.hash )
+    );
+
     const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
 
     // const utxosToSpend = (await cli.query.utxo({ address: scriptMainnetAddr }))
