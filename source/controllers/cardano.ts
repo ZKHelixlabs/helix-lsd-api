@@ -89,7 +89,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => {
       console.log(item);
-      return item.policy.toString() == policyid && item.assets[tokenName] > 10000;
+      return item.policy.toString() == policyid && item.assets[tokenName] > 10_000_000n;
     }));
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
