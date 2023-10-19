@@ -87,10 +87,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const policy = new Hash28(policyid);
     const tokenName = "stADA";
 
-    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => {
-      console.log(item);
-      return item.policy.toString() == policyid && item.assets[tokenName] > 10_000_000n;
-    }));
+    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] > 1_000n));
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
     if (!beneficiaryWithStakeUTxO) {
@@ -129,7 +126,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
-    // await cli.transaction.submit({ tx });
+    await cli.transaction.submit({ tx });
 
     return res.status(200).json({ status: "ok" });
   } catch (error: any) {
