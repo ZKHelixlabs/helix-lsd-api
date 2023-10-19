@@ -23,7 +23,8 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const scriptMainnetAddr = new Address(
       "mainnet",
-      PaymentCredentials.script(script.hash)
+      PaymentCredentials.script(script.hash),
+      stakeWallet.stakeCreds
     );
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
@@ -86,9 +87,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const policy = new Hash28(policyid);
     const tokenName = "stADA";
 
-    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find(item => {
+    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => {
       console.log(item);
-      return item.policy == policy && item.assets[tokenName] > 10000;
+      return item.policy.toString() == policyid && item.assets[tokenName] > 10000;
     }));
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
