@@ -93,6 +93,11 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     }));
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
+    if (!beneficiaryWithStakeUTxO) {
+      throw new Error(
+        "no utxos found at address " + beneficiaryWithStake.toString()
+      );
+    }
 
     // const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces - 2_000_000n;
 
@@ -114,7 +119,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
             },
             {
               policy,
-              assets: { "stADA": BigInt(mintAmount) },
+              assets: { tokenName: BigInt(mintAmount) },
             }
           ]),
         },
