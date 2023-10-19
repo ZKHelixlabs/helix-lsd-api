@@ -85,7 +85,12 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
     const tokenName = "7374414441";
 
-    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => (u.resolved.value as any)[policyid][tokenName] > 10_000_000);
+    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => {
+      if ((u.resolved.value as any)[policyid][tokenName]) {
+        return (u.resolved.value as any)[policyid][tokenName] > 10000_000_000
+      }
+      return false;
+    });
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
 
