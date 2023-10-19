@@ -82,7 +82,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('beneficiaryWithStake: ', beneficiaryWithStake.toJson());
 
-    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.lovelaces > 1_000_000);
+    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.lovelaces > 4_000_000);
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO?.toJson());
 
@@ -104,7 +104,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           value: new Value([
             {
               policy: "",
-              assets: { "": BigInt(1_200_000n) },
+              assets: { "": BigInt(2_000_000n) },
             },
             {
               policy,
