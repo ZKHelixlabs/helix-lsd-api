@@ -82,15 +82,18 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('beneficiaryWithStake: ', beneficiaryWithStake.toJson());
 
-    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.lovelaces > 10_000_000);
+    const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
+    const tokenName = "7374414441";
 
-    console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO?.toJson().resolved.value);
+    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => (u.resolved.value as any)[policyid][tokenName] > 10_000_000);
+
+    console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
 
     // const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces - 2_000_000n;
 
     const mintAmount = 10_000_000n;
 
-    const policy = new Hash28("bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4");
+    const policy = new Hash28(policyid);
 
     let tx = await cli.transaction.build({
       inputs: [
