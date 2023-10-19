@@ -1,6 +1,5 @@
 /** source/controllers/posts.ts */
 import { Request, Response, NextFunction } from "express";
-import fs from 'fs';
 import { Tx, Script, Address, isData, UTxO, DataB, DataI, Value, pBSToData, pByteString, pIntToData, Hash28 } from "@harmoniclabs/plu-ts";
 import { scriptMainnetAddr, beneficiary, beneficiaryWithStake } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
