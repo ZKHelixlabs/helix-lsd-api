@@ -87,7 +87,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => {
       const value = u.resolved.value as any;
-      if (policyid in value && tokenName in value[policyid]) {
+      if (Object.keys(value).length && policyid in value && tokenName in value[policyid]) {
         return value[policyid][tokenName] > 10000_000_000
       }
       return false;
