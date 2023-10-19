@@ -73,6 +73,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     // console.log('utxosToSpend: ', utxosToSpend);
 
     const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
+    const policyPrivateKey = cli.utils.readPrivateKey("./tokens/policy/policy.skey");
 
     const beneficiaryWithStake = new Address(
       "mainnet",
@@ -117,6 +118,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
+    tx = await cli.transaction.sign({ tx, privateKey: policyPrivateKey });
 
     // await cli.transaction.submit({ tx });
 
