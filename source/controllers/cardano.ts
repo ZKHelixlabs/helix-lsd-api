@@ -1,7 +1,7 @@
 /** source/controllers/posts.ts */
 import { Request, Response, NextFunction } from "express";
 import { Tx, Script, Address, isData, UTxO, DataB, DataI, Value, pBSToData, pByteString, pIntToData, Hash28, PaymentCredentials, StakeCredentials } from "@harmoniclabs/plu-ts";
-import { beneficiary, beneficiaryWithStake, stakeWallet } from "../contracts/stakeContract";
+import { beneficiary, stakeWallet } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
 
 const mint = async (req: Request, res: Response, next: NextFunction) => {
@@ -73,6 +73,12 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     console.log(utxosToSpend);
 
     const paymentPrivateKey = cli.utils.readPrivateKey("/tokens/payment.skey");
+
+    const beneficiaryWithStake = new Address(
+      "mainnet",
+      beneficiary.paymentCreds,
+      stakeWallet.stakeCreds
+    );
 
     const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.lovelaces > 1_000_000);
 
