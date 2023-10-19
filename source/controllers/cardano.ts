@@ -1,7 +1,7 @@
 /** source/controllers/posts.ts */
 import { Request, Response, NextFunction } from "express";
 import { Tx, Script, Address, isData, UTxO, DataB, DataI, Value, pBSToData, pByteString, pIntToData, Hash28, PaymentCredentials, StakeCredentials } from "@harmoniclabs/plu-ts";
-import { beneficiary, beneficiaryWithStake } from "../contracts/stakeContract";
+import { beneficiary, beneficiaryWithStake, stakeWallet } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
 
 const mint = async (req: Request, res: Response, next: NextFunction) => {
@@ -23,7 +23,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const scriptMainnetAddr = new Address(
       "mainnet",
       PaymentCredentials.script(script.hash),
-      new StakeCredentials("stakeKey", Hash28.fromCbor("e121633c87761373e6eae1a207042f7f563f4508d5d1928ad3a3f966aa"))
+      new StakeCredentials("stakeKey", stakeWallet.paymentCreds.hash)
     );
 
     console.log(scriptMainnetAddr);
