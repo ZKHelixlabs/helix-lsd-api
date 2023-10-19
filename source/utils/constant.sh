@@ -5,6 +5,7 @@ cardano-cli query utxo --address addr1q8g3t56p8rqm4gh9zmu9rx4y5n00qwn0qll7a2ra9z
 txhash="f2d10a3da3c58ec7b823e5fb55e82881469db093006b41101e3ace6f3f67f3ef"
 txix="1"
 funds="2000000"
+
 policyid=$(cat policy/policyID)
 fee="300000"
 tokenname="7374414441"
@@ -27,6 +28,7 @@ cardano-cli query utxo --address addr1q8g3t56p8rqm4gh9zmu9rx4y5n00qwn0qll7a2ra9z
 txhash="56165d95f89fe49089b9500a61b79f0c350a99e41e8652b2179b967a56b6e4cb"
 txix="0"
 funds="1817515"
+
 burnfee="0"
 policyid=$(cat policy/policyID)
 burnoutput="0"

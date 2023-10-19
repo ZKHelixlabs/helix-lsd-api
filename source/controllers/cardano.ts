@@ -73,7 +73,6 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     // console.log('utxosToSpend: ', utxosToSpend);
 
     const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
-    const policyPrivateKey = cli.utils.readPrivateKey("./tokens/policy/policy.skey");
 
     const beneficiaryWithStake = new Address(
       "mainnet",
@@ -83,9 +82,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('beneficiaryWithStake: ', beneficiaryWithStake.toJson());
 
-    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.lovelaces > 4_000_000);
+    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.lovelaces > 10_000_000);
 
-    console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO?.toJson());
+    console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO?.toJson().resolved.value);
 
     // const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces - 2_000_000n;
 
@@ -118,7 +117,6 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     });
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
-    tx = await cli.transaction.sign({ tx, privateKey: policyPrivateKey });
 
     // await cli.transaction.submit({ tx });
 
