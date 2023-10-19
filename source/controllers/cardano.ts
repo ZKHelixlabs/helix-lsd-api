@@ -104,7 +104,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           value: new Value([
             {
               policy: "",
-              assets: { "": BigInt(1_000_000n) },
+              assets: { "": BigInt(1_200_000n) },
             },
             {
               policy,
