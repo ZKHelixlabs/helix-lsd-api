@@ -86,6 +86,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
     const policy = new Hash28(policyid);
     const tokenName = "stADA";
+    const tokenNameBase16 = "7374414441";
 
     const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] > 1_000n));
 
@@ -116,7 +117,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
             },
             {
               policy,
-              assets: { tokenName: BigInt(mintAmount) },
+              assets: { tokenNameBase16: BigInt(mintAmount) },
             }
           ]),
         },
