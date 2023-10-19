@@ -84,7 +84,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
     const policy = new Hash28(policyid);
-    const tokenName = "7374414441";
+    const tokenName = "stADA";
 
     const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find(item => {
       console.log(item);
