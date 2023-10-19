@@ -45,6 +45,6 @@ export const beneficiary = Address.fromString('addr1v8g3t56p8rqm4gh9zmu9rx4y5n00
 
 export const beneficiaryWithStake =  Address.fromString('addr1q8g3t56p8rqm4gh9zmu9rx4y5n00qwn0qll7a2ra9z9hlfppvv7gwasnw0nw4cdzquzz7l6k8azs34w3j29d8glev64qnz5t2m');
 
-export const stakeWallet = Address.fromString('addr1q9q4fcz873flh909em3nwy2lhp2q6fw0dhaf7d253xvfcgppvv7gwasnw0nw4cdzquzz7l6k8azs34w3j29d8glev64qt567qq');
+export const stakeWallet = Address.fromString('addr1q8h02y837cjex0vwv0y8p08jlj5cc22mnqv6cm828rmk4qppvv7gwasnw0nw4cdzquzz7l6k8azs34w3j29d8glev64qzw42sz');
 
 export default stakeContract;
