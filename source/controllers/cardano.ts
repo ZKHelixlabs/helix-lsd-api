@@ -22,7 +22,8 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const scriptMainnetAddr = new Address(
       "mainnet",
-      PaymentCredentials.script(script.hash)
+      PaymentCredentials.script(script.hash),
+      StakeCredentials.fromCbor('stake1uyskx0y8wcfh8eh2ux3qwpp00atr73gg6hge9zkn50ukd2sq79hka')
     );
 
     console.log(scriptMainnetAddr);
