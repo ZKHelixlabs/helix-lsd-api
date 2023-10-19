@@ -26,7 +26,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       new StakeCredentials("stakeKey", stakeWallet.paymentCreds.hash)
     );
 
-    console.log(scriptMainnetAddr);
+    console.log(scriptMainnetAddr.toJson());
 
     const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
 
