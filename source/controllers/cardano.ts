@@ -28,7 +28,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
 
-    const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
+    // const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
 
     // const utxosToSpend = (await cli.query.utxo({ address: scriptMainnetAddr }))
     //   .filter((utxo: UTxO) => {
@@ -66,11 +66,11 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     //     return false;
     //   });
 
-    if (utxosToSpend.length == 0) {
-      throw "uopsie, are you sure your tx had enough time to get to the blockchain?"
-    }
+    // if (utxosToSpend.length == 0) {
+    //   throw "uopsie, are you sure your tx had enough time to get to the blockchain?"
+    // }
 
-    console.log('utxosToSpend: ', utxosToSpend);
+    // console.log('utxosToSpend: ', utxosToSpend);
 
     const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
 
@@ -88,33 +88,35 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     // const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces - 2_000_000n;
 
-    // const policy = new Hash28("bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4");
+    const mintAmount = 10_000_000n;
 
-    // let tx = await cli.transaction.build({
-    //   inputs: [
-    //     {
-    //       utxo: beneficiaryWithStakeUTxO as UTxO,
-    //     }
-    //   ],
-    //   outputs: [
-    //     {
-    //       address: userAddr,
-    //       value: new Value([
-    //         {
-    //           policy: "",
-    //           assets: { "": BigInt(2_000_000n) },
-    //         },
-    //         {
-    //           policy,
-    //           assets: { "stADA": BigInt(mintAmount) },
-    //         }
-    //       ]),
-    //     },
-    //   ],
-    //   changeAddress: beneficiaryWithStake,
-    // });
+    const policy = new Hash28("bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4");
 
-    // tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
+    let tx = await cli.transaction.build({
+      inputs: [
+        {
+          utxo: beneficiaryWithStakeUTxO as UTxO,
+        }
+      ],
+      outputs: [
+        {
+          address: userAddrs[0],
+          value: new Value([
+            {
+              policy: "",
+              assets: { "": BigInt(2_000_000n) },
+            },
+            {
+              policy,
+              assets: { "stADA": BigInt(mintAmount) },
+            }
+          ]),
+        },
+      ],
+      changeAddress: beneficiaryWithStake,
+    });
+
+    tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
     // await cli.transaction.submit({ tx });
 
