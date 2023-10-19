@@ -131,7 +131,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           }
         ]),
         script: {
-          inline: Script.fromJson({ "keyHash": "ef087eaefe5951cfd65121f7331e9fd0b5243c8f192d445e0bcfb88c", "type": "sig" }),
+          inline: policyScript,
           redeemer: new DataI(0)
         }
       }],
