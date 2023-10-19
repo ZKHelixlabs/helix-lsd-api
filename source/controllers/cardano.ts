@@ -23,7 +23,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const scriptMainnetAddr = new Address(
       "mainnet",
       PaymentCredentials.script(script.hash),
-      new StakeCredentials("stakeKey", stakeWallet.paymentCreds.hash)
+      stakeWallet.stakeCreds
     );
 
     console.log(scriptMainnetAddr.toJson());
