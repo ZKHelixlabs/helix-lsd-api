@@ -29,7 +29,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
 
-    // const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
+    const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
 
     // const utxosToSpend = (await cli.query.utxo({ address: scriptMainnetAddr }))
     //   .filter((utxo: UTxO) => {
@@ -67,11 +67,11 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     //     return false;
     //   });
 
-    // if (utxosToSpend.length == 0) {
-    //   throw "uopsie, are you sure your tx had enough time to get to the blockchain?"
-    // }
+    if (utxosToSpend.length == 0) {
+      throw "uopsie, are you sure your tx had enough time to get to the blockchain?"
+    }
 
-    // console.log('utxosToSpend: ', utxosToSpend);
+    console.log('utxosToSpend: ', utxosToSpend);
 
     const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
 
