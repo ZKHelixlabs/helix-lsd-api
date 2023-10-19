@@ -70,7 +70,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       throw "uopsie, are you sure your tx had enough time to get to the blockchain?"
     }
 
-    console.log(utxosToSpend);
+    console.log('utxosToSpend: ', utxosToSpend);
 
     const paymentPrivateKey = cli.utils.readPrivateKey("/tokens/payment.skey");
 
@@ -82,37 +82,37 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.lovelaces > 1_000_000);
 
-    console.log(beneficiaryWithStakeUTxO);
+    console.log('beneficiaryWithStakeUTxO: ',beneficiaryWithStakeUTxO);
 
-    const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces - 2_000_000n;
+    // const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces - 2_000_000n;
 
-    const policy = new Hash28("bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4");
+    // const policy = new Hash28("bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4");
 
-    let tx = await cli.transaction.build({
-      inputs: [
-        {
-          utxo: beneficiaryWithStakeUTxO as UTxO,
-        }
-      ],
-      outputs: [
-        {
-          address: userAddr,
-          value: new Value([
-            {
-              policy: "",
-              assets: { "": BigInt(2_000_000n) },
-            },
-            {
-              policy,
-              assets: { "stADA": BigInt(mintAmount) },
-            }
-          ]),
-        },
-      ],
-      changeAddress: beneficiaryWithStake,
-    });
+    // let tx = await cli.transaction.build({
+    //   inputs: [
+    //     {
+    //       utxo: beneficiaryWithStakeUTxO as UTxO,
+    //     }
+    //   ],
+    //   outputs: [
+    //     {
+    //       address: userAddr,
+    //       value: new Value([
+    //         {
+    //           policy: "",
+    //           assets: { "": BigInt(2_000_000n) },
+    //         },
+    //         {
+    //           policy,
+    //           assets: { "stADA": BigInt(mintAmount) },
+    //         }
+    //       ]),
+    //     },
+    //   ],
+    //   changeAddress: beneficiaryWithStake,
+    // });
 
-    tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
+    // tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
     // await cli.transaction.submit({ tx });
 
