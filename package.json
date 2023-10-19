@@ -7,11 +7,7 @@
     "dev": "nodemon source/server.ts",
     "build": "rimraf -- build/ && tsc",
     "publish": "npm run build && rimraf -- prod && cpr -- build prod",
-    "build:light": "tsc -p ./tsconfig.json && tsc-alias -p ./tsconfig.json",
-    "start": "npm run build && node dist/index.js",
-    "vesting:compile": "npm run start",
-    "vesting:create": "npm run build:light && node dist/app/createVesting.js",
-    "vesting:claim": "npm run build:light && node dist/app/claimVesting.js"
+    "compile": "npm run build && node build/scripts/compile.js"
   },
   "keywords": [],
   "author": "",

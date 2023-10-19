@@ -19,7 +19,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('beneficiary: ', beneficiary.paymentCreds.hash.toString());
 
-    const scriptMainnetAddr = cli.utils.readAddress("/home/admin/tokens/script.addr");
+    // const scriptMainnetAddr = cli.utils.readAddress("/home/admin/tokens/script.addr");
     const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
 
     // const utxosToSpend = (await cli.query.utxo({ address: scriptMainnetAddr }))
@@ -101,22 +101,6 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
     // await cli.transaction.submit({ tx });
-
-
-
-
-
-
-    if (body.data.user.toLowerCase()) return res.status(401).json({ error: 'Signature verification failed' });
-
-    const info = JSON.parse(fs.readFileSync('./.info').toString());
-
-    if (info.data.find((item: any) => item.user == body.data.user.toLowerCase())) return res.status(401).json({ error: 'This address has already been reserved' });
-
-    if (body.data) {
-      info.data.push({ user: body.data.user.toLowerCase(), inviter: body.data.inviter.toLowerCase(), timestamp: new Date().getTime() });
-    }
-    fs.writeFileSync('./.info', JSON.stringify(info));
 
     return res.status(200).json({ status: "ok" });
   } catch (error: any) {
