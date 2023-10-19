@@ -6,7 +6,6 @@
   "scripts": {
     "dev": "nodemon source/server.ts",
     "build": "rimraf -- build/ && tsc",
-    "publish": "npm run build && rimraf -- prod && cpr -- build prod",
     "compile": "npm run build && node build/scripts/compile.js"
   },
   "keywords": [],

@@ -3,7 +3,7 @@ module.exports = {
     {
       name: 'helix-lsd-api',
       script: 'node',
-      args: 'prod/server.js',
+      args: 'build/server.js',
       autorestart: true,
       max_restarts: 5,
       min_uptime: '10s',

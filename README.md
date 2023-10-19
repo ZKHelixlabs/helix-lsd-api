@@ -16,12 +16,6 @@ npm run dev
 npm run build
 ```
 
-## Publish
-
-```
-npm run publish
-```
-
 ## Run Scripts on Server
 
 ```
