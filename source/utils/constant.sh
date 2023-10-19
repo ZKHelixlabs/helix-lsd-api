@@ -22,3 +22,33 @@ cardano-cli transaction submit --tx-file matx.signed --mainnet
 
 ------BURN------
 
+cardano-cli query utxo --address addr1q8g3t56p8rqm4gh9zmu9rx4y5n00qwn0qll7a2ra9z9hlfppvv7gwasnw0nw4cdzquzz7l6k8azs34w3j29d8glev64qnz5t2m --mainnet
+
+txhash="56165d95f89fe49089b9500a61b79f0c350a99e41e8652b2179b967a56b6e4cb"
+txix="0"
+funds="1817515"
+burnfee="0"
+policyid=$(cat policy/policyID)
+burnoutput="0"
+tokenname="7374414441"
+address="addr1q8g3t56p8rqm4gh9zmu9rx4y5n00qwn0qll7a2ra9z9hlfppvv7gwasnw0nw4cdzquzz7l6k8azs34w3j29d8glev64qnz5t2m"
+
+cardano-cli transaction build-raw \
+ --fee $burnfee \
+ --tx-in $txhash#$txix \
+ --tx-out $address+$burnoutput+"0 $policyid.$tokenname"  \
+ --mint="-10000000 $policyid.$tokenname" \
+ --minting-script-file policy/policy.script \
+ --out-file burning.raw
+
+burnfee=$(cardano-cli transaction calculate-min-fee --tx-body-file burning.raw --tx-in-count 1 --tx-out-count 1 --witness-count 2 --mainnet --protocol-params-file protocol.json | cut -d " " -f1)
+burnoutput=$(expr $funds - $burnfee)
+
+cardano-cli transaction sign  \
+--signing-key-file payment.skey  \
+--signing-key-file policy/policy.skey  \
+--mainnet  \
+--tx-body-file burning.raw  \
+--out-file burning.signed
+
+cardano-cli transaction submit --tx-file burning.signed --mainnet

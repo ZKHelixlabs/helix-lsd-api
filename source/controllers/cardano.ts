@@ -106,10 +106,10 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
               policy: "",
               assets: { "": BigInt(2_000_000n) },
             },
-            // {
-            //   policy,
-            //   assets: { "stADA": BigInt(mintAmount) },
-            // }
+            {
+              policy,
+              assets: { "stADA": BigInt(mintAmount) },
+            }
           ]),
         },
       ],
