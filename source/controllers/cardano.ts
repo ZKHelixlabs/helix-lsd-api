@@ -5,6 +5,7 @@ import { beneficiary, stakeWallet } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
 import { HexString } from "@harmoniclabs/plu-ts/dist/types/HexString";
 import { koios } from "../utils/koios";
+import VestingDatum from "../VestingDatum";
 
 const mint = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -100,13 +101,23 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
-    const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces / 1_000_000n;
-    console.log(mintAmount);
+    const adaAmount = utxosToSpend[body.data.index].resolved.value.lovelaces;
+    const stADAAmount = adaAmount / 1_000_000n;
+    console.log("adaAmount: ", adaAmount);
+    console.log("stADAAmount: ", stADAAmount);
 
     let tx = await cli.transaction.build({
       inputs: [
         {
           utxo: beneficiaryWithStakeUTxO as UTxO,
+        },
+        {
+          utxo: utxosToSpend[body.data.index],
+          inputScript: {
+            script: script,
+            datum: "inline",
+            redeemer: new DataI(0)
+          }
         }
       ],
       outputs: [
@@ -119,9 +130,18 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
             },
             {
               policy,
-              assets: { [tokenName]: BigInt(mintAmount) },
+              assets: { [tokenName]: BigInt(stADAAmount) },
             }
           ]),
+        },
+        {
+          address: scriptMainnetAddr,
+          value: Value.lovelaces(adaAmount),
+          datum: VestingDatum.VestingDatum({
+            user: pBSToData.$(pByteString(userAddr.paymentCreds.hash.toBuffer())),
+            beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
+            status: pIntToData.$(1)
+          })
         },
       ],
       changeAddress: beneficiaryWithStake,
@@ -129,11 +149,11 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
-    // await cli.transaction.submit({ tx });
-    const txid = (await koios.tx.submit(tx)).toString();
+    // const txid = (await koios.tx.submit(tx)).toString();
+    const txid = "";
     console.log(txid);
 
-    return res.status(200).json({ status: "ok" });
+    return res.status(200).json({ status: "ok", data: { txid } });
   } catch (error: any) {
     return res.status(401).json({ error: error.toString() });
   }
