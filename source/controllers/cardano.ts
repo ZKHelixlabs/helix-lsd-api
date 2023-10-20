@@ -42,8 +42,6 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
         ) {
           const pkh = datum.toJson();
 
-          console.log(pkh);
-
           // search if it corresponds to one of my public keys
           const myPkhIdx = userAddrs.findIndex(
             addr => {
@@ -124,11 +122,11 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           value: new Value([
             {
               policy: "",
-              assets: { "": BigInt(2_000_000n) },
+              assets: { "": 2_000_000n },
             },
             {
               policy,
-              assets: { [tokenName]: BigInt(stADAAmount) },
+              assets: { [tokenName]: stADAAmount },
             }
           ]),
         },
