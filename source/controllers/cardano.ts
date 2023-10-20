@@ -49,7 +49,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
                 return pkh.fields[0].bytes.toString() == addr.paymentCreds.hash.toString()
                   && pkh.fields[1].bytes.toString() == beneficiary.paymentCreds.hash.toString()
                   && pkh.fields[2].int == 0n
-                  && value > 2_000_000
+                  && value > 2_000_000n
               }
               return false;
             }
@@ -148,8 +148,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
-    // const txid = (await koios.tx.submit(tx)).toString();
-    const txid = "";
+    const txid = (await koios.tx.submit(tx)).toString();
     console.log(txid);
 
     return res.status(200).json({ status: "ok", data: { txid } });
