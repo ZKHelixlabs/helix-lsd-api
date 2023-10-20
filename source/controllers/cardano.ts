@@ -30,7 +30,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
 
-    const utxosToSpend = (await cli.query.utxo({ address: scriptMainnetAddr }))
+    const utxosToSpend = (await koios.address.utxos(scriptMainnetAddr))
       .filter((utxo: UTxO) => {
         const datum = utxo.resolved.datum;
         const value = utxo.resolved.value.lovelaces;
