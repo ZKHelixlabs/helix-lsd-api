@@ -152,7 +152,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const txid = "";
     console.log(txid);
 
-    return res.status(200).json({ status: "ok", data: { txid, stADAAmount } });
+    return res.status(200).json({ status: "ok", data: { txid: txid, stADAAmount: stADAAmount } });
   } catch (error: any) {
     return res.status(401).json({ error: error.toString() });
   }
