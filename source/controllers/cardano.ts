@@ -98,7 +98,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const adaAmount = utxosToSpend[body.data.index].resolved.value.lovelaces;
-    const stADAAmount = adaAmount / 1_000_000n;
+    const stADAAmount = (adaAmount - 2_000_000n) / 1_000_000n;
     console.log("adaAmount: ", adaAmount);
     console.log("stADAAmount: ", stADAAmount);
 
@@ -132,7 +132,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
         },
         {
           address: scriptMainnetAddr,
-          value: Value.lovelaces(adaAmount),
+          value: Value.lovelaces(adaAmount - 2_000_000n),
           datum: VestingDatum.VestingDatum({
             user: pBSToData.$(pByteString(userAddr.paymentCreds.hash.toBuffer())),
             beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
