@@ -86,7 +86,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const policy = new Hash28(policyid);
     const tokenName = "stADA";
 
-    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] > 1_000n));
+    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake))[0];
+
+    // const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] > 1_000n));
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
     if (!beneficiaryWithStakeUTxO) {
