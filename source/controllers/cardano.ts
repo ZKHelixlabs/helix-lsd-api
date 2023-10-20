@@ -30,44 +30,41 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
 
-    const utxosToSpend = await koios.address.utxos(scriptMainnetAddr);
-    // const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
+    const utxosToSpend = (await cli.query.utxo({ address: scriptMainnetAddr }))
+      .filter((utxo: UTxO) => {
+        const datum = utxo.resolved.datum;
+        const value = utxo.resolved.value.lovelaces;
 
-    // const utxosToSpend = (await cli.query.utxo({ address: scriptMainnetAddr }))
-    //   .filter((utxo: UTxO) => {
-    //     const datum = utxo.resolved.datum;
-    //     const value = utxo.resolved.value.lovelaces;
+        if (
+          // datum is inline
+          isData(datum)
+        ) {
+          const pkh = datum.toJson();
 
-    //     if (
-    //       // datum is inline
-    //       isData(datum)
-    //     ) {
-    //       const pkh = datum.toJson();
+          // search if it corresponds to one of my public keys
+          const myPkhIdx = userAddrs.findIndex(
+            addr => {
+              if (pkh.fields[0] && pkh.fields[1] && pkh.fields[2]) {
+                return pkh.fields[0].bytes.toString() == addr.paymentCreds.hash.toString()
+                  && pkh.fields[1].bytes.toString() == beneficiary.paymentCreds.hash.toString()
+                  && pkh.fields[2].int == 0n
+                  && value >= 2_000_000
+              }
+              return false;
+            }
+          );
 
-    //       // search if it corresponds to one of my public keys
-    //       const myPkhIdx = userAddrs.findIndex(
-    //         addr => {
-    //           if (pkh.fields[0] && pkh.fields[1] && pkh.fields[2]) {
-    //             return pkh.fields[0].bytes.toString() == addr.paymentCreds.hash.toString()
-    //               && pkh.fields[1].bytes.toString() == beneficiary.paymentCreds.hash.toString()
-    //               && pkh.fields[2].int == 0n
-    //               && value > 2_000_000
-    //           }
-    //           return false;
-    //         }
-    //       );
+          // not a pkh of mine; not an utxo I can unstake
+          if (myPkhIdx < 0) return false;
 
-    //       // not a pkh of mine; not an utxo I can unstake
-    //       if (myPkhIdx < 0) return false;
+          // else found my staked utxo
+          userAddr = userAddrs[myPkhIdx];
 
-    //       // else found my staked utxo
-    //       userAddr = userAddrs[myPkhIdx];
+          return true;
+        }
 
-    //       return true;
-    //     }
-
-    //     return false;
-    //   });
+        return false;
+      });
 
     if (utxosToSpend.length == 0) {
       throw "uopsie, are you sure your tx had enough time to get to the blockchain?"
@@ -98,9 +95,8 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
-    // const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces;
-
-    const mintAmount = 10n;
+    const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces;
+    console.log(mintAmount);
 
     let tx = await cli.transaction.build({
       inputs: [
@@ -110,7 +106,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       ],
       outputs: [
         {
-          address: userAddrs[0],
+          address: userAddr,
           value: new Value([
             {
               policy: "",
