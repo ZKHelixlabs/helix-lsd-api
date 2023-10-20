@@ -27,7 +27,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     //   stakeWallet.stakeCreds
     // );
 
-    const scriptMainnetAddr = Address.fromString("addr1w9r50tp2a8yyt42stv9dukh53z74qfr0arx2az54helsuhqhkz9er");
+    const scriptMainnetAddr = Address.fromString("addr1zxc926kytyexmkq9npanhv2pvj7rzsxqwnerh3c09twxa9fpvv7gwasnw0nw4cdzquzz7l6k8azs34w3j29d8glev64q34hyk8");
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
 
