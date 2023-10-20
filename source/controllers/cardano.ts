@@ -95,7 +95,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
-    const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces;
+    const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces / 1_000_000n;
     console.log(mintAmount);
 
     let tx = await cli.transaction.build({
