@@ -144,6 +144,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       collaterals: [beneficiaryWithStakeUTxO],
       changeAddress: beneficiaryWithStake,
     });
+    console.log()
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
