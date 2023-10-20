@@ -42,6 +42,8 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
         ) {
           const pkh = datum.toJson();
 
+          console.log(pkh);
+
           // search if it corresponds to one of my public keys
           const myPkhIdx = userAddrs.findIndex(
             addr => {
@@ -153,7 +155,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     return res.status(200).json({ status: "ok", data: { txid, stADAAmount } });
   } catch (error: any) {
-    return res.status(401).json({ error });
+    return res.status(401).json({ error: error.toString() });
   }
 };
 
