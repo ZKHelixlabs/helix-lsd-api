@@ -107,14 +107,14 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
         {
           utxo: beneficiaryWithStakeUTxO
         },
-        // {
-        //   utxo: utxosToSpend[body.data.index],
-        //   inputScript: {
-        //     script: script,
-        //     datum: "inline",
-        //     redeemer: new DataI(0)
-        //   }
-        // }
+        {
+          utxo: utxosToSpend[body.data.index],
+          inputScript: {
+            script: script,
+            datum: "inline",
+            redeemer: new DataI(0)
+          }
+        }
       ],
       outputs: [
         {
@@ -130,18 +130,18 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
             }
           ]),
         },
-        // {
-        //   address: scriptMainnetAddr,
-        //   value: Value.lovelaces(adaAmount - 2_000_000n),
-        //   datum: VestingDatum.VestingDatum({
-        //     user: pBSToData.$(pByteString(userAddr.paymentCreds.hash.toBuffer())),
-        //     beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
-        //     status: pIntToData.$(1)
-        //   })
-        // },
+        {
+          address: scriptMainnetAddr,
+          value: Value.lovelaces(adaAmount - 2_000_000n),
+          datum: VestingDatum.VestingDatum({
+            user: pBSToData.$(pByteString(userAddr.paymentCreds.hash.toBuffer())),
+            beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
+            status: pIntToData.$(1)
+          })
+        },
       ],
-      // requiredSigners: [beneficiary.paymentCreds.hash],
-      // collaterals: [beneficiaryWithStakeUTxO],
+      requiredSigners: [beneficiary.paymentCreds.hash],
+      collaterals: [beneficiaryWithStakeUTxO],
       changeAddress: beneficiaryWithStake,
     });
 
