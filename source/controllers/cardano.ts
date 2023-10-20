@@ -85,11 +85,11 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
     const policy = new Hash28(policyid);
     const tokenName = "stADA";
-    const tokennNameBase16 = "7374414441";
+    const tokenNameBase16 = "7374414441";
 
     const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => {
       console.log(item);
-      return item.policy.toString() == policyid && item.assets[tokennNameBase16] > 1_000n
+      return item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000n
     }
     ));
 
