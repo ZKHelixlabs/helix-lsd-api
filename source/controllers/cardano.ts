@@ -11,9 +11,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const body: any = req.body;
 
-    const userAddrs = [Address.fromString(body.data.addr)];
+    const userAddrs = body.data.addrs.map(Address.fromString);
 
-    userAddrs.map(addr => {
+    userAddrs.map((addr: Address) => {
       console.log('used addrs: ', addr.paymentCreds.hash.toString());
     })
 
@@ -44,7 +44,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
           // search if it corresponds to one of my public keys
           const myPkhIdx = userAddrs.findIndex(
-            addr => {
+            (addr: Address) => {
               if (pkh.fields[0] && pkh.fields[1] && pkh.fields[2]) {
                 return pkh.fields[0].bytes.toString() == addr.paymentCreds.hash.toString()
                   && pkh.fields[1].bytes.toString() == beneficiary.paymentCreds.hash.toString()
