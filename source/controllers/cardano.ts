@@ -147,8 +147,8 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
-    // const txid = (await koios.tx.submit(tx)).toString();
-    const txid = "";
+    const txid = (await koios.tx.submit(tx)).toString();
+    // const txid = "";
     console.log("txid: ", txid);
 
     return res.status(200).json({ status: "ok", data: { txid, stADAAmount: stADAAmount.toString() } });
