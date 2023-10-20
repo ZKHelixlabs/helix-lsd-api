@@ -107,14 +107,14 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
         {
           utxo: beneficiaryWithStakeUTxO
         },
-        {
-          utxo: utxosToSpend[body.data.index],
-          inputScript: {
-            script: script,
-            datum: "inline",
-            redeemer: new DataI(0)
-          }
-        }
+        // {
+        //   utxo: utxosToSpend[body.data.index],
+        //   inputScript: {
+        //     script: script,
+        //     datum: "inline",
+        //     redeemer: new DataI(0)
+        //   }
+        // }
       ],
       outputs: [
         {
@@ -130,26 +130,26 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
             }
           ]),
         },
-        {
-          address: scriptMainnetAddr,
-          value: Value.lovelaces(adaAmount - 2_000_000n),
-          datum: VestingDatum.VestingDatum({
-            user: pBSToData.$(pByteString(userAddr.paymentCreds.hash.toBuffer())),
-            beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
-            status: pIntToData.$(1)
-          })
-        },
+        // {
+        //   address: scriptMainnetAddr,
+        //   value: Value.lovelaces(adaAmount - 2_000_000n),
+        //   datum: VestingDatum.VestingDatum({
+        //     user: pBSToData.$(pByteString(userAddr.paymentCreds.hash.toBuffer())),
+        //     beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
+        //     status: pIntToData.$(1)
+        //   })
+        // },
       ],
-      requiredSigners: [paymentPrivateKey.derivePublicKey().hash],
-      collaterals: [beneficiaryWithStakeUTxO],
+      // requiredSigners: [beneficiary.paymentCreds.hash],
+      // collaterals: [beneficiaryWithStakeUTxO],
       changeAddress: beneficiaryWithStake,
     });
     console.log()
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
-    const txid = (await koios.tx.submit(tx)).toString();
-    // const txid = "";
+    // const txid = (await koios.tx.submit(tx)).toString();
+    const txid = "";
     console.log("txid: ", txid);
 
     return res.status(200).json({ status: "ok", data: { txid, stADAAmount: stADAAmount.toString() } });
