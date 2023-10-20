@@ -4,6 +4,7 @@ import { Tx, Script, Address, isData, UTxO, DataB, DataI, Value, pBSToData, pByt
 import { beneficiary, stakeWallet } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
 import { HexString } from "@harmoniclabs/plu-ts/dist/types/HexString";
+import { koios } from "../utils/koios";
 
 const mint = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -24,12 +25,13 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const scriptMainnetAddr = new Address(
       "mainnet",
       PaymentCredentials.script(script.hash),
-      // stakeWallet.stakeCreds
+      stakeWallet.stakeCreds
     );
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
 
-    const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
+    const utxosToSpend = await koios.address.utxos(scriptMainnetAddr);
+    // const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
 
     // const utxosToSpend = (await cli.query.utxo({ address: scriptMainnetAddr }))
     //   .filter((utxo: UTxO) => {
