@@ -151,7 +151,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const txid = (await koios.tx.submit(tx)).toString();
     console.log(txid);
 
-    return res.status(200).json({ status: "ok", data: { txid } });
+    return res.status(200).json({ status: "ok", data: { txid, stADAAmount } });
   } catch (error: any) {
     return res.status(401).json({ error: error.toString() });
   }
