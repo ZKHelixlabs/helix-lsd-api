@@ -48,8 +48,8 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
               if (pkh.fields[0] && pkh.fields[1] && pkh.fields[2]) {
                 return pkh.fields[0].bytes.toString() == addr.paymentCreds.hash.toString()
                   && pkh.fields[1].bytes.toString() == beneficiary.paymentCreds.hash.toString()
-                  && pkh.fields[2].int == 0
-                  && value > 2_000_000
+                  && pkh.fields[2].int == 0n
+                  && value > 2_000_000n
               }
               return false;
             }
@@ -88,7 +88,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const tokenName = "stADA";
     const tokenNameBase16 = "7374414441";
 
-    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000));
+    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000n));
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
     if (!beneficiaryWithStakeUTxO) {
@@ -107,14 +107,14 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
         {
           utxo: beneficiaryWithStakeUTxO
         },
-        {
-          utxo: utxosToSpend[body.data.index],
-          inputScript: {
-            script: script,
-            datum: "inline",
-            redeemer: new DataI(0)
-          }
-        }
+        // {
+        //   utxo: utxosToSpend[body.data.index],
+        //   inputScript: {
+        //     script: script,
+        //     datum: "inline",
+        //     redeemer: new DataI(0)
+        //   }
+        // }
       ],
       outputs: [
         {
@@ -122,7 +122,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           value: new Value([
             {
               policy: "",
-              assets: { "": BigInt(2_000_000) },
+              assets: { "": BigInt(2_000_000n) },
             },
             {
               policy,
@@ -130,20 +130,19 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
             }
           ]),
         },
-        {
-          address: scriptMainnetAddr,
-          value: Value.lovelaces(adaAmount - 2_000_000n),
-          datum: VestingDatum.VestingDatum({
-            user: pBSToData.$(pByteString(userAddr.paymentCreds.hash.toBuffer())),
-            beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
-            status: pIntToData.$(1)
-          })
-        },
+        // {
+        //   address: scriptMainnetAddr,
+        //   value: Value.lovelaces(adaAmount - 2_000_000n),
+        //   datum: VestingDatum.VestingDatum({
+        //     user: pBSToData.$(pByteString(userAddr.paymentCreds.hash.toBuffer())),
+        //     beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
+        //     status: pIntToData.$(1)
+        //   })
+        // },
       ],
-      requiredSigners: [beneficiary.paymentCreds.hash],
-      collaterals: [beneficiaryWithStakeUTxO],
+      // requiredSigners: [beneficiary.paymentCreds.hash],
+      // collaterals: [beneficiaryWithStakeUTxO],
       changeAddress: beneficiaryWithStake,
-      invalidBefore: cli.query.tipSync().slot
     });
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
@@ -152,7 +151,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const txid = "";
     console.log(txid);
 
-    return res.status(200).json({ status: "ok", data: { txid: txid, stADAAmount: stADAAmount } });
+    return res.status(200).json({ status: "ok", data: { txid, stADAAmount } });
   } catch (error: any) {
     return res.status(401).json({ error: error.toString() });
   }
