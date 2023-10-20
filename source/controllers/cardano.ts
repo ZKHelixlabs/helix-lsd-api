@@ -105,27 +105,18 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     let tx = await cli.transaction.build({
       inputs: [
         {
+          utxo: beneficiaryWithStakeUTxO
+        },
+        {
           utxo: utxosToSpend[body.data.index],
           inputScript: {
             script: script,
             datum: "inline",
             redeemer: new DataI(0)
           }
-        },
-        {
-          utxo: beneficiaryWithStakeUTxO
-        },
+        }
       ],
       outputs: [
-        {
-          address: scriptMainnetAddr,
-          value: Value.lovelaces(adaAmount - 2_000_000n),
-          datum: VestingDatum.VestingDatum({
-            user: pBSToData.$(pByteString(userAddr.paymentCreds.hash.toBuffer())),
-            beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
-            status: pIntToData.$(1)
-          })
-        },
         {
           address: userAddr,
           value: new Value([
@@ -138,6 +129,20 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
               assets: { [tokenName]: stADAAmount },
             }
           ]),
+        },
+        {
+          address: scriptMainnetAddr,
+          value: new Value([
+            {
+              policy: "",
+              assets: { "": adaAmount - 2_000_000n },
+            }
+          ]),
+          datum: VestingDatum.VestingDatum({
+            user: pBSToData.$(pByteString(userAddr.paymentCreds.hash.toBuffer())),
+            beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
+            status: pIntToData.$(1)
+          })
         },
       ],
       requiredSigners: [beneficiary.paymentCreds.hash],
