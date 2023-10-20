@@ -17,7 +17,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       console.log('used addrs: ', addr.paymentCreds.hash.toString());
     })
 
-    let usedAddrs!: Address[];
+    let usedAddrs: Address[] = [];
 
     console.log('beneficiary: ', beneficiary.paymentCreds.hash.toString());
 
