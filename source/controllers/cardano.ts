@@ -48,8 +48,8 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
               if (pkh.fields[0] && pkh.fields[1] && pkh.fields[2]) {
                 return pkh.fields[0].bytes.toString() == addr.paymentCreds.hash.toString()
                   && pkh.fields[1].bytes.toString() == beneficiary.paymentCreds.hash.toString()
-                  && pkh.fields[2].int == 0n
-                  && value > 2_000_000n
+                  && pkh.fields[2].int == 0
+                  && value > 2_000_000
               }
               return false;
             }
@@ -88,7 +88,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const tokenName = "stADA";
     const tokenNameBase16 = "7374414441";
 
-    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000n));
+    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000));
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
     if (!beneficiaryWithStakeUTxO) {
@@ -122,7 +122,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           value: new Value([
             {
               policy: "",
-              assets: { "": BigInt(2_000_000n) },
+              assets: { "": BigInt(2_000_000) },
             },
             {
               policy,
