@@ -17,7 +17,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       console.log('used addrs: ', addr.paymentCreds.hash.toString());
     })
 
-    let userAddr!: Address;
+    let usedAddrs!: Address[];
 
     console.log('beneficiary: ', beneficiary.paymentCreds.hash.toString());
 
@@ -59,7 +59,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           if (myPkhIdx < 0) return false;
 
           // else found my staked utxo
-          userAddr = userAddrs[myPkhIdx];
+          usedAddrs.push(userAddrs[myPkhIdx]);
 
           return true;
         }
@@ -118,7 +118,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       ],
       outputs: [
         {
-          address: userAddr,
+          address: usedAddrs[body.data.index],
           value: new Value([
             {
               policy: "",
