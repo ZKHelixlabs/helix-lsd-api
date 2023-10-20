@@ -153,7 +153,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     return res.status(200).json({ status: "ok", data: { txid, stADAAmount } });
   } catch (error: any) {
-    return res.status(401).json({ error: error.toString() });
+    return res.status(401).json({ error });
   }
 };
 
