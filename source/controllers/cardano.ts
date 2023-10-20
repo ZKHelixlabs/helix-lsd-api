@@ -21,13 +21,11 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const script = cli.utils.readScript("./mainnet/stakeContract.plutus.json");
 
-    // const scriptMainnetAddr = new Address(
-    //   "mainnet",
-    //   PaymentCredentials.script(script.hash),
-    //   stakeWallet.stakeCreds
-    // );
-
-    const scriptMainnetAddr = Address.fromString("addr1zxc926kytyexmkq9npanhv2pvj7rzsxqwnerh3c09twxa9fpvv7gwasnw0nw4cdzquzz7l6k8azs34w3j29d8glev64q34hyk8");
+    const scriptMainnetAddr = new Address(
+      "mainnet",
+      PaymentCredentials.script(script.hash),
+      // stakeWallet.stakeCreds
+    );
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
 
