@@ -29,7 +29,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
 
-    // const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
+    const utxosToSpend = await cli.query.utxo({ address: scriptMainnetAddr });
 
     // const utxosToSpend = (await cli.query.utxo({ address: scriptMainnetAddr }))
     //   .filter((utxo: UTxO) => {
@@ -67,15 +67,13 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     //     return false;
     //   });
 
-    // if (utxosToSpend.length == 0) {
-    //   throw "uopsie, are you sure your tx had enough time to get to the blockchain?"
-    // }
+    if (utxosToSpend.length == 0) {
+      throw "uopsie, are you sure your tx had enough time to get to the blockchain?"
+    }
 
-    // console.log('utxosToSpend: ', utxosToSpend);
+    console.log('utxosToSpend: ', utxosToSpend);
 
     const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
-    const policyPrivateKey = cli.utils.readPrivateKey("./tokens/policy/policy.skey");
-    const policyScript = cli.utils.readScript("./tokens/policy/policy.script");
 
     const beneficiaryWithStake = new Address(
       "mainnet",
@@ -98,7 +96,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
-    // const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces - 2_000_000n;
+    // const mintAmount = utxosToSpend[body.data.index].resolved.value.lovelaces;
 
     const mintAmount = 10n;
 
@@ -123,25 +121,12 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           ]),
         },
       ],
-      mints: [{
-        value: new Value([
-          {
-            policy,
-            assets: { [tokenName]: BigInt(mintAmount) },
-          }
-        ]),
-        script: {
-          inline: policyScript,
-          redeemer: new DataI(0)
-        }
-      }],
       changeAddress: beneficiaryWithStake,
     });
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
-    tx = await cli.transaction.sign({ tx, privateKey: policyPrivateKey });
 
-    await cli.transaction.submit({ tx });
+    // await cli.transaction.submit({ tx });
 
     return res.status(200).json({ status: "ok" });
   } catch (error: any) {
