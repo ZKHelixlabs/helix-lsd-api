@@ -104,9 +104,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     let tx = await cli.transaction.build({
       inputs: [
-        {
-          utxo: beneficiaryWithStakeUTxO
-        },
+        // {
+        //   utxo: beneficiaryWithStakeUTxO
+        // },
         {
           utxo: utxosToSpend[body.data.index],
           inputScript: {
@@ -116,20 +116,20 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           }
         }
       ],
-      outputs: [
-        {
-          address: usedAddrs[body.data.index],
-          value: new Value([
-            {
-              policy: "",
-              assets: { "": 2_000_000n },
-            },
-            {
-              policy,
-              assets: { [tokenName]: stADAAmount },
-            }
-          ]),
-        },
+      // outputs: [
+      //   {
+      //     address: usedAddrs[body.data.index],
+      //     value: new Value([
+      //       {
+      //         policy: "",
+      //         assets: { "": 2_000_000n },
+      //       },
+      //       {
+      //         policy,
+      //         assets: { [tokenName]: stADAAmount },
+      //       }
+      //     ]),
+      //   },
         // {
         //   address: scriptMainnetAddr,
         //   value: Value.lovelaces(adaAmount - 2_000_000n),
@@ -139,13 +139,11 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
         //     status: pIntToData.$(1)
         //   })
         // },
-      ],
+      // ],
       requiredSigners: [beneficiary.paymentCreds.hash],
       collaterals: [beneficiaryWithStakeUTxO],
-      changeAddress: beneficiaryWithStake,
-      invalidBefore: cli.query.tipSync().slot
+      changeAddress: beneficiaryWithStake
     });
-    console.log()
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
