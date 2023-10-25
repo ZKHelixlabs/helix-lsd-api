@@ -117,19 +117,19 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
         }
       ],
       outputs: [
-        {
-          address: usedAddrs[body.data.index],
-          value: new Value([
-            {
-              policy: "",
-              assets: { "": 2_000_000n },
-            },
-            {
-              policy,
-              assets: { [tokenName]: stADAAmount },
-            }
-          ]),
-        },
+        // {
+        //   address: usedAddrs[body.data.index],
+        //   value: new Value([
+        //     {
+        //       policy: "",
+        //       assets: { "": 2_000_000n },
+        //     },
+        //     {
+        //       policy,
+        //       assets: { [tokenName]: stADAAmount },
+        //     }
+        //   ]),
+        // },
         {
           address: scriptMainnetAddr,
           value: Value.lovelaces(adaAmount - 2_000_000n),
