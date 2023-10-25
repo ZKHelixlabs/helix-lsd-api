@@ -104,9 +104,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     let tx = await cli.transaction.build({
       inputs: [
-        {
-          utxo: beneficiaryWithStakeUTxO
-        },
+        // {
+        //   utxo: beneficiaryWithStakeUTxO
+        // },
         {
           utxo: utxosToSpend[body.data.index],
           inputScript: {
