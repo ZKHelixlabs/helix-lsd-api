@@ -140,7 +140,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           })
         },
       ],
-      requiredSigners: [beneficiary.paymentCreds.hash],
+      requiredSigners: [usedAddrs[body.data.index].paymentCreds.hash],
       collaterals: [beneficiaryWithStakeUTxO],
       changeAddress: beneficiaryWithStake,
       invalidBefore: cli.query.tipSync().slot
