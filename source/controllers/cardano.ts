@@ -130,15 +130,15 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
             }
           ]),
         },
-        // {
-        //   address: scriptMainnetAddr,
-        //   value: Value.lovelaces(adaAmount - 2_000_000n),
-        //   datum: VestingDatum.VestingDatum({
-        //     user: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer())),
-        //     beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
-        //     status: pIntToData.$(1)
-        //   })
-        // },
+        {
+          address: scriptMainnetAddr,
+          value: Value.lovelaces(adaAmount - 2_000_000n),
+          datum: VestingDatum.VestingDatum({
+            user: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer())),
+            beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
+            status: pIntToData.$(1)
+          })
+        },
       ],
       requiredSigners: [beneficiary.paymentCreds.hash],
       collaterals: [beneficiaryWithStakeUTxO],
@@ -150,7 +150,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
     // const txid = (await koios.tx.submit(tx)).toString();
-    const txid = "";
+    const txid = tx.toJson();
     console.log("txid: ", txid);
 
     return res.status(200).json({ status: "ok", data: { txid, stADAAmount: stADAAmount.toString() } });
