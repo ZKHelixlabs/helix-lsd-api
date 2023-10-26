@@ -110,8 +110,8 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           utxo: utxosToSpend[body.data.index],
           inputScript: {
             script: script,
-            datum: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer())),
-            redeemer: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer()))
+            datum: "inline",
+            redeemer: new DataB("")
           }
         }
       ],
