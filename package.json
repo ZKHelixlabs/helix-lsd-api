@@ -15,7 +15,7 @@
     "@types/node": "^18.15.11",
     "@harmoniclabs/koios-pluts": "^0.1.4-dev1",
     "@harmoniclabs/cardanocli-pluts": "^0.1.4-dev1",
-    "@harmoniclabs/plu-ts": "^0.3.0",
+    "@harmoniclabs/plu-ts": "^0.3.0-dev3",
     "@types/axios": "^0.14.0",
     "@types/express": "^4.17.14",
     "@types/morgan": "^1.9.3",
