@@ -3,7 +3,6 @@ import { Request, Response, NextFunction } from "express";
 import { Tx, Script, Address, isData, UTxO, DataB, DataI, Value, pBSToData, pByteString, pIntToData, Hash28, PaymentCredentials, StakeCredentials } from "@harmoniclabs/plu-ts";
 import { beneficiary, stakeWallet } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
-import { HexString } from "@harmoniclabs/plu-ts/dist/types/HexString";
 import { koios } from "../utils/koios";
 import VestingDatum from "../VestingDatum";
 
