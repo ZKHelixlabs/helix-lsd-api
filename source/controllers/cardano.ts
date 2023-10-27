@@ -89,7 +89,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const tokenName = "Testtoken";
     const tokenNameBase16 = "54657374746F6B656e";
 
-    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000n));
+    // const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000n));
+
+    const beneficiaryWithStakeUTxO = await koios.address.utxos(beneficiaryWithStake);
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
     if (!beneficiaryWithStakeUTxO) {
