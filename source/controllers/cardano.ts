@@ -91,9 +91,10 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     // const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000n));
 
-    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake))[0];
+    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake))[1];
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
+
     if (!beneficiaryWithStakeUTxO) {
       throw new Error(
         "no utxos found at address " + beneficiaryWithStake.toString()
