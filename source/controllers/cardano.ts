@@ -87,7 +87,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     // const tokenName = "stADA";
     // const tokenNameBase16 = "7374414441";
     const tokenName = "Testtoken";
-    const tokenNameBase16 = "54657374746F6B656E";
+    const tokenNameBase16 = "54657374746F6B656e";
 
     const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000n));
 
