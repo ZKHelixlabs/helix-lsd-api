@@ -23,9 +23,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const script = cli.utils.readScript("./mainnet/stakeContract.plutus.json");
 
     const scriptMainnetAddr = new Address(
-      "mainnet",
+      "testnet",
       PaymentCredentials.script(script.hash),
-      stakeWallet.stakeCreds
+      // stakeWallet.stakeCreds
     );
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
@@ -75,9 +75,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
 
     const beneficiaryWithStake = new Address(
-      "mainnet",
+      "testnet",
       beneficiary.paymentCreds,
-      stakeWallet.stakeCreds
+      // stakeWallet.stakeCreds
     );
 
     console.log('beneficiaryWithStake: ', beneficiaryWithStake.toJson());
@@ -173,9 +173,9 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
     const script = cli.utils.readScript("./mainnet/stakeContract.plutus.json");
 
     const scriptMainnetAddr = new Address(
-      "mainnet",
+      "testnet",
       PaymentCredentials.script(script.hash),
-      stakeWallet.stakeCreds
+      // stakeWallet.stakeCreds
     );
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
@@ -279,9 +279,9 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
     const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
 
     const beneficiaryWithStake = new Address(
-      "mainnet",
+      "testnet",
       beneficiary.paymentCreds,
-      stakeWallet.stakeCreds
+      // stakeWallet.stakeCreds
     );
 
     console.log('beneficiaryWithStake: ', beneficiaryWithStake.toJson());
