@@ -146,7 +146,6 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       // ],
       requiredSigners: [beneficiary.paymentCreds.hash],
       collaterals: [beneficiaryWithStakeUTxO],
-      collateralReturn:{address:beneficiaryWithStake,value: Value.lovelaces(1000000)},
       changeAddress: beneficiaryWithStake
     });
 
