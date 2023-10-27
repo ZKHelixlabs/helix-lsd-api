@@ -108,9 +108,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     let tx = await cli.transaction.build({
       inputs: [
-        {
-          utxo: beneficiaryWithStakeUTxO
-        },
+        // {
+        //   utxo: beneficiaryWithStakeUTxO
+        // },
         {
           utxo: utxosToSpend[body.data.index],
           inputScript: {
@@ -146,6 +146,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       // ],
       requiredSigners: [beneficiary.paymentCreds.hash],
       collaterals: [beneficiaryWithStakeUTxO],
+      collateralReturn:{address:beneficiaryWithStake,value: Value.lovelaces(1000000)},
       changeAddress: beneficiaryWithStake
     });
 
