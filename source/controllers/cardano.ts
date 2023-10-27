@@ -84,8 +84,10 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
     const policy = new Hash28(policyid);
-    const tokenName = "stADA";
-    const tokenNameBase16 = "7374414441";
+    // const tokenName = "stADA";
+    // const tokenNameBase16 = "7374414441";
+    const tokenName = "Testtoken";
+    const tokenNameBase16 = "54657374746F6B656E";
 
     const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000n));
 
@@ -224,8 +226,11 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
 
     const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
     const policy = new Hash28(policyid);
-    const tokenName = "stADA";
-    const tokenNameBase16 = "7374414441";
+    // const tokenName = "stADA";
+    // const tokenNameBase16 = "7374414441";
+    const tokenName = "Testtoken";
+    const tokenNameBase16 = "54657374746F6B656E";
+
 
     const stADAAmount = (utxosToSpend[body.data.index].resolved.value.map as any).find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1n).assets[tokenNameBase16];
     const adaAmount = stADAAmount * 1_000_000n;
