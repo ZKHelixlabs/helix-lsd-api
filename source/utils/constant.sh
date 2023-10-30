@@ -17,9 +17,9 @@ network="--testnet-magic 1"
 
 cardano-cli query utxo --address $address $network
 
-txhash="f2d10a3da3c58ec7b823e5fb55e82881469db093006b41101e3ace6f3f67f3ef"
-txix="1"
-funds="2000000"
+txhash="609a8e2e6aee4d618b1a919fb6e252d4bd4b62162c59d040983271a58c23ba9a"
+txix="0"
+funds="10000000000"
 
 policyid=$(cat policy/policyID)
 fee="300000"
@@ -29,7 +29,7 @@ output="0"
 
 cardano-cli transaction build-raw  --fee $fee  --tx-in $txhash#$txix  --tx-out $address+$output+"$tokenamount $policyid.$tokenname"  --mint "$tokenamount $policyid.$tokenname"  --minting-script-file policy/policy.script  --out-file matx.raw
 
-fee=$(cardano-cli transaction calculate-min-fee --tx-body-file matx.raw --tx-in-count 1 --tx-out-count 1 --witness-count 2 $network --protocol-params-file protocol.json | cut -d " " -f1)
+fee=$(cardano-cli transaction calculate-min-fee --tx-body-file matx.raw --tx-in-count 1 --tx-out-count 1 --witness-count 2 $network --protocol-params-file protocol_test.json | cut -d " " -f1)
 output=$(expr $funds - $fee)
 
 cardano-cli transaction sign  --signing-key-file payment.skey  --signing-key-file policy/policy.skey  $network --tx-body-file matx.raw  --out-file matx.signed
@@ -68,3 +68,35 @@ cardano-cli transaction sign  \
 --out-file burning.signed
 
 cardano-cli transaction submit --tx-file burning.signed --mainnet
+
+------TRANSFER------
+
+tokenname="7374414441"
+fee="0"
+receiver="addr_test1qp625wsc3y7prsya8mavvn4mmmv962fx4r3k7xl5uakxvjepvv7gwasnw0nw4cdzquzz7l6k8azs34w3j29d8glev64qmntwrh"
+receiver_output="10000000"
+txhash="d21762fb2cb4738e4d9246c5fb363836b52c50c71c8f0fb9c5dc7af949d127fb"
+txix="0"
+funds="9999818483"
+
+address="addr_test1vrg3t56p8rqm4gh9zmu9rx4y5n00qwn0qll7a2ra9z9hlfq5yylex"
+network="--testnet-magic 1"
+
+cardano-cli query utxo --address $address $network
+
+echo Tokenname: $tokenname
+echo Address: $address
+echo Policy ID: $policyid
+
+cardano-cli transaction build-raw  \
+--fee $fee  \
+--tx-in $txhash#$txix  \
+--tx-out $receiver+$receiver_output+"5000000 $policyid.$tokenname"  \
+--tx-out $address+$output+"5000000 $policyid.$tokenname"  \
+--out-file rec_matx.raw
+
+fee=$(cardano-cli transaction calculate-min-fee --tx-body-file rec_matx.raw --tx-in-count 1 --tx-out-count 2 --witness-count 1 $network --protocol-params-file protocol_test.json | cut -d " " -f1)
+output=$(expr $funds - $fee - 10000000)
+
+cardano-cli transaction sign --signing-key-file payment.skey $network --tx-body-file rec_matx.raw --out-file rec_matx.signed
+cardano-cli transaction submit --tx-file rec_matx.signed $network
