@@ -84,14 +84,10 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
     const policy = new Hash28(policyid);
-    // const tokenName = "stADA";
-    // const tokenNameBase16 = "7374414441";
-    const tokenName = "Testtoken";
-    const tokenNameBase16 = "54657374746F6B656e";
+    const tokenName = "stADA";
+    const tokenNameBase16 = "7374414441";
 
-    // const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000n));
-
-    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake))[0];
+    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] > 1_000n));
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
 
@@ -108,15 +104,15 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     let tx = await cli.transaction.build({
       inputs: [
-        // {
-        //   utxo: beneficiaryWithStakeUTxO
-        // },
+        {
+          utxo: beneficiaryWithStakeUTxO
+        },
         {
           utxo: utxosToSpend[body.data.index],
           inputScript: {
             script: script,
             datum: "inline",
-            redeemer: new DataB("")
+            redeemer: new DataI(0)
           }
         }
       ],
@@ -146,7 +142,8 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       // ],
       requiredSigners: [beneficiary.paymentCreds.hash],
       collaterals: [beneficiaryWithStakeUTxO],
-      changeAddress: beneficiaryWithStake
+      changeAddress: beneficiaryWithStake,
+      invalidBefore: cli.query.tipSync().slot
     });
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
@@ -229,11 +226,8 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
 
     const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
     const policy = new Hash28(policyid);
-    // const tokenName = "stADA";
-    // const tokenNameBase16 = "7374414441";
-    const tokenName = "Testtoken";
-    const tokenNameBase16 = "54657374746F6B656E";
-
+    const tokenName = "stADA";
+    const tokenNameBase16 = "7374414441";
 
     const stADAAmount = (utxosToSpend[body.data.index].resolved.value.map as any).find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1n).assets[tokenNameBase16];
     const adaAmount = stADAAmount * 1_000_000n;
