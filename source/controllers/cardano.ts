@@ -102,6 +102,8 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     console.log("adaAmount: ", adaAmount);
     console.log("stADAAmount: ", stADAAmount);
 
+    const pkh = paymentPrivateKey.derivePublicKey().hash;
+
     let tx = await cli.transaction.build({
       inputs: [
         {
@@ -140,7 +142,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       //     })
       //   },
       // ],
-      requiredSigners: [beneficiary.paymentCreds.hash],
+      requiredSigners: [pkh],
       collaterals: [beneficiaryWithStakeUTxO],
       changeAddress: beneficiaryWithStake,
       invalidBefore: cli.query.tipSync().slot
