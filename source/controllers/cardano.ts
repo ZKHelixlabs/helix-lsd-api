@@ -87,7 +87,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const tokenName = "stADA";
     const tokenNameBase16 = "7374414441";
 
-    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] > 1_000n));
+    // const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] > 1_000n));
+
+    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake }))[0];
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
 
