@@ -97,7 +97,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
-    const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == "" && item.assets[""] >= 1_000_000n && item.assets[""] < 500_000_000n));
+    const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.length == 1 && u.resolved.value.map.find((item: any) => item.policy.toString() == "" && item.assets[""] >= 1_000_000n));
 
     console.log('beneficiaryWithStakeADAUTxO: ', beneficiaryWithStakeADAUTxO?.resolved.value.toJson());
 
