@@ -97,7 +97,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
-    const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == "" && item.assets[""] <= 2_000_000n));
+    const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == "" && item.assets[""] >= 1_000_000n));
 
     console.log('beneficiaryWithStakeADAUTxO: ', beneficiaryWithStakeADAUTxO);
 
@@ -128,30 +128,30 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           }
         }
       ],
-      // outputs: [
-      //   {
-      //     address: usedAddrs[body.data.index],
-      //     value: new Value([
-      //       {
-      //         policy: "",
-      //         assets: { "": 2_000_000n },
-      //       },
-      //       {
-      //         policy,
-      //         assets: { [tokenName]: stADAAmount },
-      //       }
-      //     ]),
-      //   },
-      //   {
-      //     address: scriptMainnetAddr,
-      //     value: Value.lovelaces(adaAmount - 2_000_000n),
-      //     datum: VestingDatum.VestingDatum({
-      //       user: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer())),
-      //       beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
-      //       status: pIntToData.$(1)
-      //     })
-      //   },
-      // ],
+      outputs: [
+        {
+          address: usedAddrs[body.data.index],
+          value: new Value([
+            {
+              policy: "",
+              assets: { "": 2_000_000n },
+            },
+            {
+              policy,
+              assets: { [tokenName]: stADAAmount },
+            }
+          ]),
+        },
+        {
+          address: scriptMainnetAddr,
+          value: Value.lovelaces(adaAmount - 2_000_000n),
+          datum: VestingDatum.VestingDatum({
+            user: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer())),
+            beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
+            status: pIntToData.$(1)
+          })
+        },
+      ],
       requiredSigners: [pkh],
       collaterals: [beneficiaryWithStakeADAUTxO],
       changeAddress: beneficiaryWithStake,
