@@ -87,15 +87,23 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const tokenName = "stADA";
     const tokenNameBase16 = "7374414441";
 
-    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] > 1_000n));
+    const beneficiaryWithStakeSTADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] >= 1_000n));
 
-    // const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake }))[1];
+    console.log('beneficiaryWithStakeSTADAUTxO: ', beneficiaryWithStakeSTADAUTxO);
 
-    console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
-
-    if (!beneficiaryWithStakeUTxO) {
+    if (!beneficiaryWithStakeSTADAUTxO) {
       throw new Error(
-        "no utxos found at address " + beneficiaryWithStake.toString()
+        "no stADA utxos found at address " + beneficiaryWithStake.toString()
+      );
+    }
+
+    const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == "" && item.assets[""] <= 2_000_000n));
+
+    console.log('beneficiaryWithStakeADAUTxO: ', beneficiaryWithStakeADAUTxO);
+
+    if (!beneficiaryWithStakeADAUTxO) {
+      throw new Error(
+        "no ADA utxos found at address " + beneficiaryWithStake.toString()
       );
     }
 
@@ -109,7 +117,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     let tx = await cli.transaction.build({
       inputs: [
         {
-          utxo: beneficiaryWithStakeUTxO
+          utxo: beneficiaryWithStakeSTADAUTxO
         },
         {
           utxo: utxosToSpend[body.data.index],
@@ -145,7 +153,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       //   },
       // ],
       requiredSigners: [pkh],
-      collaterals: [beneficiaryWithStakeUTxO],
+      collaterals: [beneficiaryWithStakeADAUTxO],
       changeAddress: beneficiaryWithStake,
       invalidBefore: cli.query.tipSync().slot
     });
