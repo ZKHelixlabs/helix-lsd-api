@@ -89,7 +89,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const beneficiaryWithStakeSTADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] >= 1_000n));
 
-    console.log('beneficiaryWithStakeSTADAUTxO: ', beneficiaryWithStakeSTADAUTxO);
+    console.log('beneficiaryWithStakeSTADAUTxO: ', beneficiaryWithStakeSTADAUTxO?.resolved.value);
 
     if (!beneficiaryWithStakeSTADAUTxO) {
       throw new Error(
@@ -99,7 +99,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == "" && item.assets[""] >= 1_000_000n && item.assets[""] < 1000_000_000n));
 
-    console.log('beneficiaryWithStakeADAUTxO: ', beneficiaryWithStakeADAUTxO);
+    console.log('beneficiaryWithStakeADAUTxO: ', beneficiaryWithStakeADAUTxO?.resolved.value);
 
     if (!beneficiaryWithStakeADAUTxO) {
       throw new Error(
