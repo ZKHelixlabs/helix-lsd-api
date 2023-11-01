@@ -193,6 +193,11 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
 
+    const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
+    const policy = new Hash28(policyid);
+    const tokenName = "stADA";
+    const tokenNameBase16 = "7374414441";
+
     const utxosToSpend = (await koios.address.utxos(scriptMainnetAddr))
       .filter((utxo: UTxO) => {
         const datum = utxo.resolved.datum;
@@ -234,11 +239,6 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     console.log('utxosToSpend: ', utxosToSpend);
-
-    const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
-    const policy = new Hash28(policyid);
-    const tokenName = "stADA";
-    const tokenNameBase16 = "7374414441";
 
     const stADAAmount = (utxosToSpend[body.data.index].resolved.value.map as any).find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1n).assets[tokenNameBase16];
     const adaAmount = stADAAmount * 1_000_000n;
