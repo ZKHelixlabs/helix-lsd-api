@@ -359,7 +359,7 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
           address: scriptMainnetAddr,
           value: Value.lovelaces(oldAdaAmount - adaAmount),
           datum: VestingDatum.VestingDatum({
-            user: pBSToData.$(pByteString((adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[0].bytes.toBuffer())),
+            user: pBSToData.$(pByteString((adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[0].bytes)),
             beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
             status: pIntToData.$(1),
             oldValue: pIntToData.$(oldAdaAmount),
