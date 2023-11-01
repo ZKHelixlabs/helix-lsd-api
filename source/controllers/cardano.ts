@@ -97,7 +97,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
-    const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.length == 1 && u.resolved.value.map.find((item: any) => item.policy.toString() == "" && item.assets[""] >= 1_000_000n));
+    const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.length == 1 && u.resolved.value.lovelaces >= 1_000_000n);
 
     console.log('beneficiaryWithStakeADAUTxO: ', beneficiaryWithStakeADAUTxO?.resolved.value.toJson());
 
@@ -299,9 +299,10 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('beneficiaryWithStake: ', beneficiaryWithStake.toJson());
 
-    const beneficiaryWithStakeUTxO = (await koios.address.utxos(beneficiaryWithStake)).find((u: UTxO) => u.resolved.value.lovelaces >= 1_000_000n);
+    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.length == 1 && u.resolved.value.lovelaces >= 1_000_000n);
 
-    console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
+    console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO?.resolved.value.toJson());
+
     if (!beneficiaryWithStakeUTxO) {
       throw new Error(
         "no utxos found at address " + beneficiaryWithStake.toString()
@@ -311,71 +312,67 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
     let tx = await cli.transaction.build({
       inputs: [
         {
-          utxo: beneficiaryWithStakeUTxO
+          utxo: utxosToSpend[body.data.index],
+          inputScript: {
+            script: script,
+            datum: "inline",
+            redeemer: new DataI(0)
+          }
         },
-        // {
-        //   utxo: utxosToSpend[body.data.index],
-        //   inputScript: {
-        //     script: script,
-        //     datum: "inline",
-        //     redeemer: new DataI(0)
-        //   }
-        // },
-        // {
-        //   utxo: adaUtxosToSpend[0],
-        //   inputScript: {
-        //     script: script,
-        //     datum: "inline",
-        //     redeemer: new DataI(0)
-        //   }
-        // },
+        {
+          utxo: adaUtxosToSpend[0],
+          inputScript: {
+            script: script,
+            datum: "inline",
+            redeemer: new DataI(0)
+          }
+        },
       ],
       outputs: [
         {
           address: usedAddrs[body.data.index],
           value: Value.lovelaces(adaAmount)
         },
-        // {
-        //   address: scriptMainnetAddr,
-        //   value: new Value([
-        //     {
-        //       policy: "",
-        //       assets: { "": 2_000_000n },
-        //     },
-        //     {
-        //       policy,
-        //       assets: { [tokenName]: stADAAmount },
-        //     }
-        //   ]),
-        //   datum: VestingDatum.VestingDatum({
-        //     user: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer())),
-        //     beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
-        //     status: pIntToData.$(3)
-        //   })
-        // },
-        // {
-        //   address: scriptMainnetAddr,
-        //   value: Value.lovelaces(oldAdaAmount - adaAmount),
-        //   datum: VestingDatum.VestingDatum({
-        //     user: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer())),
-        //     beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
-        //     status: pIntToData.$(1)
-        //   })
-        // },
+        {
+          address: scriptMainnetAddr,
+          value: new Value([
+            {
+              policy: "",
+              assets: { "": 2_000_000n },
+            },
+            {
+              policy,
+              assets: { [tokenName]: stADAAmount },
+            }
+          ]),
+          datum: VestingDatum.VestingDatum({
+            user: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer())),
+            beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
+            status: pIntToData.$(3)
+          })
+        },
+        {
+          address: scriptMainnetAddr,
+          value: Value.lovelaces(oldAdaAmount - adaAmount),
+          datum: VestingDatum.VestingDatum({
+            user: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer())),
+            beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
+            status: pIntToData.$(1)
+          })
+        },
       ],
-      // requiredSigners: [beneficiary.paymentCreds.hash],
-      // collaterals: [beneficiaryWithStakeUTxO],
+      requiredSigners: [beneficiary.paymentCreds.hash],
+      collaterals: [beneficiaryWithStakeUTxO],
       changeAddress: beneficiaryWithStake,
+      invalidBefore: cli.query.tipSync().slot
     });
-    console.log()
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
-    const txid = (await koios.tx.submit(tx)).toString();
-    // const txid = "";
-    console.log("txid: ", txid);
+    await cli.transaction.submit({ tx: tx });
+    console.log("Withdrawn success: ", stADAAmount, "ADA");
 
-    return res.status(200).json({ status: "ok", data: { txid, stADAAmount: stADAAmount.toString() } });
+    return res.status(200).json({ status: "ok", data: { stADAAmount: stADAAmount.toString() } });
   } catch (error: any) {
     return res.status(401).json({ error: error.toString() });
   }
