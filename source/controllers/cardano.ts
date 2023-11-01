@@ -97,7 +97,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
       );
     }
 
-    const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.length == 1 && u.resolved.value.lovelaces >= 1_000_000n);
+    const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.length == 1 && u.resolved.value.lovelaces >= 1_500_000n);
 
     console.log('beneficiaryWithStakeADAUTxO: ', beneficiaryWithStakeADAUTxO?.resolved.value.toJson());
 
@@ -299,7 +299,7 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('beneficiaryWithStake: ', beneficiaryWithStake.toJson());
 
-    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.length == 1 && u.resolved.value.lovelaces >= 1_000_000n);
+    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.length == 1 && u.resolved.value.lovelaces >= 1_500_000n);
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO?.resolved.value.toJson());
 
