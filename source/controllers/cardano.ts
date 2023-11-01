@@ -289,6 +289,8 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
 
     const oldAdaAmount = adaUtxosToSpend[0].resolved.value.lovelaces;
 
+    console.log('oldAdaAmount: ', oldAdaAmount);
+
     const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
 
     const beneficiaryWithStake = new Address(
