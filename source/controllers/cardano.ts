@@ -87,9 +87,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const tokenName = "stADA";
     const tokenNameBase16 = "7374414441";
 
-    // const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] > 1_000n));
+    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] > 1_000n));
 
-    const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake }))[1];
+    // const beneficiaryWithStakeUTxO = (await cli.query.utxo({ address: beneficiaryWithStake }))[1];
 
     console.log('beneficiaryWithStakeUTxO: ', beneficiaryWithStakeUTxO);
 
@@ -152,12 +152,10 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
 
-    // const txid = (await koios.tx.submit(tx)).toString();
     await cli.transaction.submit({ tx: tx });
-    const txid = tx.toJson();
-    console.log("txid: ", txid);
+    console.log("Minted success: ", stADAAmount, "stADA");
 
-    return res.status(200).json({ status: "ok", data: { txid, stADAAmount: stADAAmount.toString() } });
+    return res.status(200).json({ status: "ok", data: { stADAAmount: stADAAmount.toString() } });
   } catch (error: any) {
     return res.status(401).json({ error: error.toString() });
   }
