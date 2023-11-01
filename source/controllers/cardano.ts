@@ -117,6 +117,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     let tx = await cli.transaction.build({
       inputs: [
         {
+          utxo: beneficiaryWithStakeADAUTxO
+        },
+        {
           utxo: beneficiaryWithStakeSTADAUTxO
         },
         {
