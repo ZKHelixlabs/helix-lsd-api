@@ -286,6 +286,8 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
     console.log('adaUtxosToSpend: ', adaUtxosToSpend);
 
     const oldAdaAmount = adaUtxosToSpend[0].resolved.value.lovelaces;
+    const oldUser = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[0].bytes;
+    const oldValue = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[3];
 
     console.log('oldAdaAmount: ', oldAdaAmount);
 
@@ -359,10 +361,10 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
           address: scriptMainnetAddr,
           value: Value.lovelaces(oldAdaAmount - adaAmount),
           datum: VestingDatum.VestingDatum({
-            user: pBSToData.$(pByteString((adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[0].bytes)),
+            user: pBSToData.$(pByteString(oldUser)),
             beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
             status: pIntToData.$(1),
-            oldValue: pIntToData.$(oldAdaAmount),
+            oldValue: pIntToData.$(oldValue && oldValue.int > 0 ? oldValue.int : oldAdaAmount),
           })
         },
       ],
