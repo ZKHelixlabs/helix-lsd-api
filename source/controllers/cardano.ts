@@ -367,8 +367,8 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
             user: pBSToData.$(pByteString(oldUser)),
             beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
             status: pIntToData.$(1),
-            oldValue: pIntToData.$(oldValue ? oldValue : oldAdaAmount),
-            oldTime: pIntToData.$(oldTime ? oldTime : new Date().getTime()),
+            oldValue: oldValue ? pBSToData.$(pByteString(oldValue)) : pIntToData.$(oldAdaAmount),
+            oldTime: oldTime ? pBSToData.$(pByteString(oldTime)) : pIntToData.$(new Date().getTime()),
           })
         },
       ],
