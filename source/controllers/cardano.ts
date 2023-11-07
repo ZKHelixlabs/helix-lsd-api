@@ -262,7 +262,7 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
               if (pkh.fields[0] && pkh.fields[1] && pkh.fields[2]) {
                 return pkh.fields[1].bytes.toString() == beneficiary.paymentCreds.hash.toString()
                   && pkh.fields[2].int == 1n
-                  && value >= adaAmount + 2_000_000n
+                  && value >= adaAmount
               }
               return false;
             }
