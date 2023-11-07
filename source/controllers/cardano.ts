@@ -290,6 +290,8 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
     const oldUser = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[0].bytes;
     const oldValue = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[3]?.int;
     const oldTime = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[4]?.int;
+    console.log('oldValue: ', oldValue);
+    console.log('oldTime: ', oldTime);
 
     console.log('oldAdaAmount: ', oldAdaAmount);
 
