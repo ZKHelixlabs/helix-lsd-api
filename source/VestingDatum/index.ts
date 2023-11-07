@@ -1,4 +1,4 @@
-import { PPubKeyHash, int, pstruct } from "@harmoniclabs/plu-ts";
+import { PPubKeyHash, str, int, pstruct } from "@harmoniclabs/plu-ts";
 
 // modify the Datum as you prefer
 const VestingDatum = pstruct({
@@ -7,7 +7,7 @@ const VestingDatum = pstruct({
         beneficiary: PPubKeyHash.type,
         status: int,
         oldValue: int,
-        oldTime: int
+        oldTime: str
     }
 });
 
