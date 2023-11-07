@@ -6,7 +6,8 @@ const VestingDatum = pstruct({
         user: PPubKeyHash.type,
         beneficiary: PPubKeyHash.type,
         status: int,
-        oldValue: int
+        oldValue: int,
+        oldTime: int
     }
 });
 
