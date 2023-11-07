@@ -1,6 +1,6 @@
 /** source/controllers/posts.ts */
 import { Request, Response, NextFunction } from "express";
-import { Tx, Script, Address, isData, UTxO, Data, DataB, DataI, Value, pBSToData, pByteString, pIntToData, Hash28, PaymentCredentials, StakeCredentials } from "@harmoniclabs/plu-ts";
+import { Tx, Script, Address, isData, UTxO, Data, DataB, DataI, Value, pBSToData, pInt, pByteString, pIntToData, Hash28, PaymentCredentials, StakeCredentials } from "@harmoniclabs/plu-ts";
 import { beneficiary, stakeWallet } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
 import { koios } from "../utils/koios";
@@ -288,12 +288,13 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
 
     const oldAdaAmount = adaUtxosToSpend[0].resolved.value.lovelaces;
     const oldUser = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[0].bytes;
-    const oldValue = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[3]?.int;
-    const oldTime = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[4]?.int;
-    console.log('oldValue: ', oldValue);
-    console.log('oldTime: ', oldTime);
+    const oldValue = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[3];
+    const oldTime = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[4];
 
     console.log('oldAdaAmount: ', oldAdaAmount);
+    console.log('oldUser: ', oldUser);
+    console.log('oldValue: ', oldValue);
+    console.log('oldTime: ', oldTime);
 
     const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
 
@@ -369,8 +370,8 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
             user: pBSToData.$(pByteString(oldUser)),
             beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
             status: pIntToData.$(1),
-            oldValue: oldValue ? pIntToData.$(oldValue.toString()) : pIntToData.$(oldAdaAmount),
-            oldTime: oldTime ? pIntToData.$(oldTime.toString()) : pIntToData.$(new Date().getTime()),
+            oldValue: pIntToData.$(oldValue && oldValue.int ? pInt(oldValue.int) : oldAdaAmount),
+            oldTime: pIntToData.$(oldTime && oldTime.int ? pInt(oldTime.int) : new Date().getTime()),
           })
         },
       ],
