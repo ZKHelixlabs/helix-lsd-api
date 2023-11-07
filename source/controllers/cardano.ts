@@ -288,8 +288,8 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
 
     const oldAdaAmount = adaUtxosToSpend[0].resolved.value.lovelaces;
     const oldUser = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[0].bytes;
-    const oldValue = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[3];
-    const oldTime = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[4];
+    const oldValue = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[3].int;
+    const oldTime = (adaUtxosToSpend[0].resolved.datum as Data).toJson().fields[4].int;
 
     console.log('oldAdaAmount: ', oldAdaAmount);
 
@@ -367,8 +367,8 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
             user: pBSToData.$(pByteString(oldUser)),
             beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
             status: pIntToData.$(1),
-            oldValue: pIntToData.$(oldValue && oldValue.bytes ? oldValue.bytes : oldAdaAmount),
-            oldTime: pIntToData.$(oldTime && oldTime.bytes ? oldTime.bytes : new Date().getTime()),
+            oldValue: pIntToData.$(oldValue ? oldValue : oldAdaAmount),
+            oldTime: pIntToData.$(oldTime ? oldTime : new Date().getTime()),
           })
         },
       ],
