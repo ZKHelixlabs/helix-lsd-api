@@ -5,5 +5,5 @@ config()
 
 export const cli = new CardanoCliPluts({
     network: "mainnet",
-    cardanoCliPath: "/home/admin/.local/bin/cardano-cli"
+    cardanoCliPath: "/root/.local/bin/cardano-cli"
 });

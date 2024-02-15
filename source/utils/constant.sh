@@ -1,8 +1,8 @@
 ------NODE------
 
-cardano-node run --config /home/admin/cardano/mainnet/config.json --database-path /home/admin/cardano/mainnet/db/ --socket-path /home/admin/cardano/mainnet/db/node.socket --host-addr 0.0.0.0 --port 1337 --topology /home/admin/cardano/mainnet/topology.json
+cardano-node run --config /root/cardano/mainnet/config.json --database-path /root/cardano/mainnet/db/ --socket-path /root/cardano/mainnet/db/node.socket --host-addr 0.0.0.0 --port 1337 --topology /root/cardano/mainnet/topology.json
 
-cardano-node run --config /home/admin/cardano/testnet/config.json --database-path /home/admin/cardano/testnet/db/ --socket-path /home/admin/cardano/testnet/db/node.socket --host-addr 0.0.0.0 --port 1337 --topology /home/admin/cardano/testnet/topology.json
+cardano-node run --config /root/cardano/testnet/config.json --database-path /root/cardano/testnet/db/ --socket-path /root/cardano/testnet/db/node.socket --host-addr 0.0.0.0 --port 1337 --topology /root/cardano/testnet/topology.json
 
 cardano-cli query tip --mainnet
 cardano-cli query tip --testnet-magic 1
