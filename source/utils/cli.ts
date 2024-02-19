@@ -4,5 +4,6 @@ import { config } from "dotenv";
 config()
 
 export const cli = new CardanoCliPluts({
-    network: "mainnet"
+    network: "mainnet",
+    cardanoCliPath: "/root/.local/bin/cardano-cli"
 });
