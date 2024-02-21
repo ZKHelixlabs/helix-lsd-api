@@ -4,7 +4,7 @@ import { Tx, Script, Address, isData, UTxO, Data, DataB, DataI, Value, pBSToData
 import { beneficiary, stakeWallet } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
 import { koios } from "../utils/koios";
-import VestingDatum from "../VestingDatum";
+import StakeDatum from "../StakeDatum";
 
 const mint = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -22,15 +22,15 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
 
     const script = cli.utils.readScript("./mainnet/stakeContract.plutus.json");
 
-    const scriptMainnetAddr = new Address(
+    const scriptMainnetAddrWithStake = new Address(
       "mainnet",
       PaymentCredentials.script(script.hash),
       stakeWallet.stakeCreds
     );
 
-    console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
+    console.log('scriptMainnetAddrWithStake: ', scriptMainnetAddrWithStake.toJson());
 
-    const utxosToSpend = (await koios.address.utxos(scriptMainnetAddr))
+    const utxosToSpend = (await koios.address.utxos(scriptMainnetAddrWithStake))
       .filter((utxo: UTxO) => {
         const datum = utxo.resolved.datum;
         const value = utxo.resolved.value.lovelaces;
@@ -141,9 +141,9 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           ]),
         },
         {
-          address: scriptMainnetAddr,
+          address: scriptMainnetAddrWithStake,
           value: Value.lovelaces(adaAmount - 2_000_000n),
-          datum: VestingDatum.VestingDatum({
+          datum: StakeDatum.StakeDatum({
             user: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer())),
             beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
             status: pIntToData.$(1),
@@ -185,20 +185,20 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
 
     const script = cli.utils.readScript("./mainnet/stakeContract.plutus.json");
 
-    const scriptMainnetAddr = new Address(
+    const scriptMainnetAddrWithStake = new Address(
       "mainnet",
       PaymentCredentials.script(script.hash),
       stakeWallet.stakeCreds
     );
 
-    console.log('scriptMainnetAddr: ', scriptMainnetAddr.toJson());
+    console.log('scriptMainnetAddrWithStake: ', scriptMainnetAddrWithStake.toJson());
 
     const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
     const policy = new Hash28(policyid);
     const tokenName = "hstADA";
     const tokenNameBase16 = "687374414441";
 
-    const utxosToSpend = (await koios.address.utxos(scriptMainnetAddr))
+    const utxosToSpend = (await koios.address.utxos(scriptMainnetAddrWithStake))
       .filter((utxo: UTxO) => {
         const datum = utxo.resolved.datum;
         const valueMap = utxo.resolved.value.map;
@@ -245,7 +245,7 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
     console.log("hstADAAmount: ", hstADAAmount);
     console.log("adaAmount: ", adaAmount);
 
-    const adaUtxosToSpend = (await koios.address.utxos(scriptMainnetAddr))
+    const adaUtxosToSpend = (await koios.address.utxos(scriptMainnetAddrWithStake))
       .filter((utxo: UTxO) => {
         const datum = utxo.resolved.datum;
         const value = utxo.resolved.value.lovelaces;
@@ -344,7 +344,7 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
           value: Value.lovelaces(adaAmount)
         },
         {
-          address: scriptMainnetAddr,
+          address: scriptMainnetAddrWithStake,
           value: new Value([
             {
               policy: "",
@@ -355,7 +355,7 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
               assets: { [tokenName]: hstADAAmount },
             }
           ]),
-          datum: VestingDatum.VestingDatum({
+          datum: StakeDatum.StakeDatum({
             user: pBSToData.$(pByteString(usedAddrs[body.data.index].paymentCreds.hash.toBuffer())),
             beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
             status: pIntToData.$(3),
@@ -364,9 +364,9 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
           })
         },
         {
-          address: scriptMainnetAddr,
+          address: scriptMainnetAddrWithStake,
           value: Value.lovelaces(oldAdaAmount - adaAmount),
-          datum: VestingDatum.VestingDatum({
+          datum: StakeDatum.StakeDatum({
             user: pBSToData.$(pByteString(oldUser)),
             beneficiary: pBSToData.$(pByteString(beneficiary.paymentCreds.hash.toBuffer())),
             status: pIntToData.$(1),

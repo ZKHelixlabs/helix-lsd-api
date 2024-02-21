@@ -1,9 +1,9 @@
 import { Address, bool, bs, compile, data, int, lam, makeValidator, papp, PaymentCredentials, pBool, pfn, phoist, pif, pintToBS, plet, pmatch, precursive, PScriptContext, pStr, ptrace, ptraceIfFalse, punsafeConvertType, Script, ScriptType, pstruct, PPubKeyHash, StakeCredentials } from "@harmoniclabs/plu-ts";
 import { cli } from "../utils/cli";
-import StakeDatum from "../StakeDatum";
+import BridgeDatum from "../BridgeDatum";
 
-const stakeContract = pfn([
-    StakeDatum.type,
+const bridgeContract = pfn([
+    BridgeDatum.type,
     data,
     PScriptContext.type
 ], bool)
@@ -11,7 +11,7 @@ const stakeContract = pfn([
         // inlined
         const signedByBeneficiary = ctx.tx.signatories.some(datum.beneficiary.eqTerm);
 
-        return signedByBeneficiary.and(true);
+        return signedByBeneficiary.and(true).and(true);
     });
 
 ///////////////////////////////////////////////////////////////////
@@ -20,7 +20,7 @@ const stakeContract = pfn([
 // ------------------------------------------------------------- //
 ///////////////////////////////////////////////////////////////////
 
-export const untypedValidator = makeValidator(stakeContract);
+export const untypedValidator = makeValidator(bridgeContract);
 
 export const compiledContract = compile(untypedValidator);
 
@@ -45,4 +45,4 @@ export const beneficiary = Address.fromString('addr1v8g3t56p8rqm4gh9zmu9rx4y5n00
 
 // export const beneficiary = Address.fromString('addr_test1vrg3t56p8rqm4gh9zmu9rx4y5n00qwn0qll7a2ra9z9hlfq5yylex');
 
-export default stakeContract;
+export default bridgeContract;
