@@ -386,7 +386,7 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
     await cli.transaction.submit({ tx: tx });
     console.log("Withdrawn success: ", stADAAmount, "ADA");
 
-    return res.status(200).json({ status: "ok", data: { stADAAmount: stADAAmount.toString() } });
+    return res.status(200).json({ status: "ok", data: { adaAmount: stADAAmount.toString() } });
   } catch (error: any) {
     return res.status(401).json({ error: error.toString() });
   }
