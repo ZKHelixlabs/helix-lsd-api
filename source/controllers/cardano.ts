@@ -40,6 +40,8 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
           isData(datum)
         ) {
           const pkh = datum.toJson();
+          console.log(pkh);
+          console.log(value);
 
           // search if it corresponds to one of my public keys
           const myPkhIdx = userAddrs.findIndex(
