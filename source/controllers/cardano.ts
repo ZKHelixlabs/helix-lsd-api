@@ -87,7 +87,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     const tokenName = "hstADA";
     const tokenNameBase16 = "687374414441";
 
-    const beneficiaryWithStakeHSTADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] >= 1_000n));
+    const beneficiaryWithStakeHSTADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] >= 1_000_000_000n));
 
     console.log('beneficiaryWithStakeHSTADAUTxO: ', beneficiaryWithStakeHSTADAUTxO?.resolved.value.toJson());
 
@@ -108,7 +108,7 @@ const mint = async (req: Request, res: Response, next: NextFunction) => {
     }
 
     const adaAmount = utxosToSpend[body.data.index].resolved.value.lovelaces;
-    const hstADAAmount = (adaAmount - 2_000_000n) / 1_000_000n;
+    const hstADAAmount = adaAmount - 2_000_000n;
     console.log("adaAmount: ", adaAmount);
     console.log("hstADAAmount: ", hstADAAmount);
 
@@ -216,7 +216,7 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
                 return pkh.fields[0].bytes.toString() == addr.paymentCreds.hash.toString()
                   && pkh.fields[1].bytes.toString() == beneficiary.paymentCreds.hash.toString()
                   && pkh.fields[2].int == 2n
-                  && valueMap.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1n)
+                  && valueMap.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1_000_000n)
               }
               return false;
             }
@@ -240,8 +240,8 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
 
     console.log('utxosToSpend: ', utxosToSpend);
 
-    const hstADAAmount = (utxosToSpend[body.data.index].resolved.value.map as any).find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1n).assets[tokenNameBase16];
-    const adaAmount = hstADAAmount * 1_000_000n;
+    const hstADAAmount = (utxosToSpend[body.data.index].resolved.value.map as any).find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1_000_000n).assets[tokenNameBase16];
+    const adaAmount = hstADAAmount;
     console.log("hstADAAmount: ", hstADAAmount);
     console.log("adaAmount: ", adaAmount);
 
@@ -386,7 +386,7 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
     await cli.transaction.submit({ tx: tx });
     console.log("Withdrawn success: ", hstADAAmount, "ADA");
 
-    return res.status(200).json({ status: "ok", data: { adaAmount: hstADAAmount.toString() } });
+    return res.status(200).json({ status: "ok", data: { adaAmount: adaAmount.toString() } });
   } catch (error: any) {
     return res.status(401).json({ error: error.toString() });
   }
