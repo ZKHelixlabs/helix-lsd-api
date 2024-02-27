@@ -1,11 +1,3 @@
-------BITCOIND------
-
-bitcoind -datadir=/mnt/btc/btc-data -txindex
-
-bitcoin-cli -datadir=/mnt/btc/btc-data getblockchaininfo
-
-bitcoin-cli -datadir=/mnt/btc/btc-data stop
-
 ------NODE------
 
 cardano-node run --config /root/cardano/mainnet/config.json --database-path /root/cardano/mainnet/db/ --socket-path /root/cardano/mainnet/db/node.socket --host-addr 0.0.0.0 --port 1337 --topology /root/cardano/mainnet/topology.json
