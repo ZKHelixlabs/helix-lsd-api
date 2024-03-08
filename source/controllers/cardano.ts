@@ -450,7 +450,7 @@ const getSignature = async (req: Request, res: Response, next: NextFunction) => 
 
     if (utxosToSpend.length > 0) {
       const hstADAAmount = (utxosToSpend[0].resolved.value.map as any).find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1_000_000n).assets[tokenNameBase16];
-      const messageHash = ethers.utils.solidityKeccak256(["address", "uint256", "string", "address"], [req.params.evmAddress, ethers.utils.parseUnits(hstADAAmount.toString()), req.params.txid, bridgeAddr]);
+      const messageHash = ethers.utils.solidityKeccak256(["address", "uint256", "string", "address"], [req.params.evmAddress, ethers.utils.parseUnits(hstADAAmount.toString()).toString(), req.params.txid, bridgeAddr]);
       const messageHashBinary = ethers.utils.arrayify(messageHash);
 
       const signature = await wallets[0].signMessage(messageHashBinary);
