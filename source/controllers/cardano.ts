@@ -4,7 +4,13 @@ import { Tx, Script, Address, isData, UTxO, Data, DataB, DataI, Value, pBSToData
 import { beneficiary, stakeWallet } from "../contracts/stakeContract";
 import { cli } from "../utils/cli";
 import { koios } from "../utils/koios";
+import { ethers } from 'ethers';
 import StakeDatum from "../StakeDatum";
+
+const provider = new ethers.providers.JsonRpcProvider('https://l2rpc.helixlabs.org');
+const wallets = (process.env.WALLETS as string).split(',').map(item => new ethers.Wallet(item, provider));
+
+const bridgeAddr = '0x16efFe87aaeD1Bd39421eEc2bbC9Cc77DD279472';
 
 const mint = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -392,4 +398,58 @@ const withdraw = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export default { mint, withdraw };
+const getSignature = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const script = cli.utils.readScript("./mainnet/bridgeContract.plutus.json");
+
+    const scriptMainnetAddrWithStake = new Address(
+      "mainnet",
+      PaymentCredentials.script(script.hash),
+      stakeWallet.stakeCreds
+    );
+
+    const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
+    const policy = new Hash28(policyid);
+    const tokenName = "hstADA";
+    const tokenNameBase16 = "687374414441";
+
+    const myAddrs: any[] = ['addr1'];
+
+    const utxosToSpend = (await koios.address.utxos(scriptMainnetAddrWithStake)).filter((utxo: any) => {
+      const datum = utxo.resolved.datum;
+      const valueMap = utxo.resolved.value.map;
+      const myPkhIdx = myAddrs.findIndex((addr) => {
+        if (datum.fields[1] && datum.fields[2] && datum.fields[5]) {
+          return (
+            datum.fields[1].bytes == beneficiary.paymentCreds.hash.toString() &&
+            datum.fields[2].int == 0n &&
+            datum.fields[5].bytes == pByteString(Buffer.from(req.params.evmAddress)).toIR().toJson().value &&
+            valueMap.find(
+              (item: any) =>
+                item.policy_id == policyid && item.asset_name == tokenNameBase16 && Number(item.quantity) >= 1
+            )
+          );
+        }
+        return false;
+      });
+      return myPkhIdx >= 0;
+    });
+
+    if (utxosToSpend.length > 0) {
+      const hstADAAmount = (utxosToSpend[0].resolved.value.map as any).find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1_000_000n).assets[tokenNameBase16];
+      const messageHash = ethers.utils.solidityKeccak256(["address", "uint256", "uint256", "address"], [req.params.evmAddress, ethers.utils.parseUnits(hstADAAmount), req.params.txid, bridgeAddr]);
+      const messageHashBinary = ethers.utils.arrayify(messageHash);
+
+      const signature = await wallets[0].signMessage(messageHashBinary);
+
+      return res.status(200).json({ status: "ok", signature });
+    } else {
+      return res.status(401).json({ error: 'No bridge results' });
+    }
+  } catch (error: any) {
+    return res.status(401).json({ error: error.toString() });
+  }
+};
+
+
+export default { mint, withdraw, getSignature };

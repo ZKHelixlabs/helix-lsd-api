@@ -1,4 +1,4 @@
-import { PPubKeyHash, str, int, pstruct } from "@harmoniclabs/plu-ts";
+import { PPubKeyHash, str, bs, int, pstruct } from "@harmoniclabs/plu-ts";
 
 // modify the Datum as you prefer
 const BridgeDatum = pstruct({
@@ -7,7 +7,8 @@ const BridgeDatum = pstruct({
         beneficiary: PPubKeyHash.type,
         status: int,
         oldValue: int,
-        oldTime: int
+        oldTime: int,
+        evmAddress: bs
     }
 });
 
