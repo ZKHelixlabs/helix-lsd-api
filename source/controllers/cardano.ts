@@ -413,27 +413,40 @@ const getSignature = async (req: Request, res: Response, next: NextFunction) => 
     const tokenName = "hstADA";
     const tokenNameBase16 = "687374414441";
 
-    const myAddrs: any[] = ['addr1'];
+    const userAddrs: any[] = ['addr1'];
 
-    const utxosToSpend = (await koios.address.utxos(scriptMainnetAddrWithStake)).filter((utxo: any) => {
-      const datum = utxo.resolved.datum;
-      const valueMap = utxo.resolved.value.map;
-      const myPkhIdx = myAddrs.findIndex((addr) => {
-        if (datum.fields[1] && datum.fields[2] && datum.fields[5]) {
-          return (
-            datum.fields[1].bytes == beneficiary.paymentCreds.hash.toString() &&
-            datum.fields[2].int == 0n &&
-            datum.fields[5].bytes == pByteString(Buffer.from(req.params.evmAddress)).toIR().toJson().value &&
-            valueMap.find(
-              (item: any) =>
-                item.policy_id == policyid && item.asset_name == tokenNameBase16 && Number(item.quantity) >= 1
-            )
+    const utxosToSpend = (await koios.address.utxos(scriptMainnetAddrWithStake))
+      .filter((utxo: UTxO) => {
+        const datum = utxo.resolved.datum;
+        const valueMap = utxo.resolved.value.map;
+
+        if (
+          // datum is inline
+          isData(datum)
+        ) {
+          const pkh = datum.toJson();
+
+          // search if it corresponds to one of my public keys
+          const myPkhIdx = userAddrs.findIndex(
+            (addr: Address) => {
+              if (pkh.fields[1] && pkh.fields[2] && pkh.fields[5]) {
+                return pkh.fields[1].bytes.toString() == beneficiary.paymentCreds.hash.toString()
+                  && pkh.fields[2].int == 0n
+                  && pkh.fields[5].bytes.toString() == pByteString(Buffer.from(req.params.evmAddress)).toIR().toJson().value
+                  && valueMap.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1n)
+              }
+              return false;
+            }
           );
+
+          // not a pkh of mine; not an utxo I can unstake
+          if (myPkhIdx < 0) return false;
+
+          return true;
         }
+
         return false;
       });
-      return myPkhIdx >= 0;
-    });
 
     if (utxosToSpend.length > 0) {
       console.log(utxosToSpend[0].resolved);
