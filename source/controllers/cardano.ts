@@ -436,6 +436,7 @@ const getSignature = async (req: Request, res: Response, next: NextFunction) => 
     });
 
     if (utxosToSpend.length > 0) {
+      console.log(utxosToSpend[0].resolved);
       const hstADAAmount = (utxosToSpend[0].resolved.value.map as any).find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1_000_000n).assets[tokenNameBase16];
       const messageHash = ethers.utils.solidityKeccak256(["address", "uint256", "uint256", "address"], [req.params.evmAddress, ethers.utils.parseUnits(hstADAAmount), req.params.txid, bridgeAddr]);
       const messageHashBinary = ethers.utils.arrayify(messageHash);
