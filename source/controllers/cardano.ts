@@ -432,7 +432,7 @@ const getSignature = async (req: Request, res: Response, next: NextFunction) => 
               if (pkh.fields[1] && pkh.fields[2] && pkh.fields[5]) {
                 return pkh.fields[1].bytes.toString() == beneficiary.paymentCreds.hash.toString()
                   && pkh.fields[2].int == 0n
-                  && pkh.fields[5].bytes.toString() == pByteString(Buffer.from(req.params.evmAddress)).toIR().toJson().value
+                  && pkh.fields[5].bytes.toString() == pByteString(Buffer.from(req.params.evmAddress)).toIR().toJson().value.toString()
                   && valueMap.find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1n)
               }
               return false;
@@ -449,7 +449,7 @@ const getSignature = async (req: Request, res: Response, next: NextFunction) => 
       });
 
     if (utxosToSpend.length > 0) {
-      console.log(utxosToSpend[0].resolved);
+      console.log(utxosToSpend[0].resolved.toJson());
       const hstADAAmount = (utxosToSpend[0].resolved.value.map as any).find((item: any) => item.policy.toString() == policyid && item.assets[tokenNameBase16] >= 1_000_000n).assets[tokenNameBase16];
       const messageHash = ethers.utils.solidityKeccak256(["address", "uint256", "uint256", "address"], [req.params.evmAddress, ethers.utils.parseUnits(hstADAAmount), req.params.txid, bridgeAddr]);
       const messageHashBinary = ethers.utils.arrayify(messageHash);
