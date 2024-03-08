@@ -10,7 +10,7 @@ import StakeDatum from "../StakeDatum";
 const provider = new ethers.providers.JsonRpcProvider('https://l2rpc.helixlabs.org');
 const wallets = (process.env.WALLETS as string).split(',').map(item => new ethers.Wallet(item, provider));
 
-const bridgeAddr = '0x16efFe87aaeD1Bd39421eEc2bbC9Cc77DD279472';
+const bridgeAddr = '0xABc41708F989926468c8b5184Ad6Bec1c3a4A131';
 
 const mint = async (req: Request, res: Response, next: NextFunction) => {
   try {
