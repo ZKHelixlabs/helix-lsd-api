@@ -11,6 +11,9 @@ const provider = new ethers.providers.JsonRpcProvider('https://l2rpc.helixlabs.o
 const wallets = (process.env.WALLETS as string).split(',').map(item => new ethers.Wallet(item, provider));
 
 const bridgeAddr = '0x8C9aC5e18adbD025305E398350aaa0d77806B9Cb';
+const bridgeAbi = [
+  'function orders(string memory cardanoAddress, uint256 orderId) public view returns (address, uint256, uint256, uint256)'
+];
 
 const mint = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -464,5 +467,99 @@ const getSignature = async (req: Request, res: Response, next: NextFunction) => 
   }
 };
 
+const mintSTADA = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const body: any = req.body;
 
-export default { mint, withdraw, getSignature };
+    const bridge = new ethers.Contract(bridgeAddr, bridgeAbi, provider);
+    const order = await bridge.orders(body.data.cardanoAddress, body.data.orderId);
+
+    if (order.length == 4) {
+      if (order[3] == 0) {
+        console.log('beneficiary: ', beneficiary.paymentCreds.hash.toString());
+
+        const paymentPrivateKey = cli.utils.readPrivateKey("./tokens/payment.skey");
+
+        const beneficiaryWithStake = new Address(
+          "mainnet",
+          beneficiary.paymentCreds,
+          stakeWallet.stakeCreds
+        );
+
+        console.log('beneficiaryWithStake: ', beneficiaryWithStake.toJson());
+
+        const policyid = "bc8dc1c63df795e248d767e5dc413b7c390f3b76e843a26be96e45b4";
+        const policy = new Hash28(policyid);
+        const tokenName = "hstADA";
+        const tokenNameBase16 = "687374414441";
+
+        const beneficiaryWithStakeHSTADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.find((item: any) => item.policy.toString() == policyid && item.assets[tokenName] >= 1_000_000_000n));
+
+        console.log('beneficiaryWithStakeHSTADAUTxO: ', beneficiaryWithStakeHSTADAUTxO?.resolved.value.toJson());
+
+        if (!beneficiaryWithStakeHSTADAUTxO) {
+          throw new Error(
+            "no hstADA utxos found at address " + beneficiaryWithStake.toString()
+          );
+        }
+
+        const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.length == 1 && u.resolved.value.lovelaces >= 2_000_000n);
+
+        console.log('beneficiaryWithStakeADAUTxO: ', beneficiaryWithStakeADAUTxO?.resolved.value.toJson());
+
+        if (!beneficiaryWithStakeADAUTxO) {
+          throw new Error(
+            "no ADA utxos found at address " + beneficiaryWithStake.toString()
+          );
+        }
+
+        const hstADAAmount = ethers.utils.parseUnits(ethers.utils.formatUnits(order[1]), 6).toNumber();
+
+        let tx = await cli.transaction.build({
+          inputs: [
+            {
+              utxo: beneficiaryWithStakeHSTADAUTxO
+            },
+          ],
+          outputs: [
+            {
+              address: body.data.cardanoAddress,
+              value: new Value([
+                {
+                  policy: "",
+                  assets: { "": 2_000_000n },
+                },
+                {
+                  policy,
+                  assets: { [tokenName]: hstADAAmount },
+                }
+              ]),
+            },
+          ],
+          requiredSigners: [beneficiary.paymentCreds.hash],
+          collaterals: [beneficiaryWithStakeADAUTxO],
+          changeAddress: beneficiaryWithStake,
+          invalidBefore: cli.query.tipSync().slot
+        });
+
+        tx = await cli.transaction.sign({ tx, privateKey: paymentPrivateKey });
+
+        await cli.transaction.submit({ tx: tx });
+        console.log("Minted success: ", hstADAAmount, "hstADA");
+
+        const txs = await bridge.connect(wallets[0]).claim(body.data.cardanoAddress, body.data.orderId);
+        const receipt = await txs.wait();
+
+        return res.status(200).json({ status: "ok", data: { hstADAAmount: hstADAAmount.toString() } });
+      } else {
+        return res.status(401).json({ error: 'You have already withdrawn this payment' });
+      }
+    } else {
+      return res.status(401).json({ error: 'No bridge results' });
+    }
+  } catch (error: any) {
+    return res.status(401).json({ error: error.toString() });
+  }
+};
+
+export default { mint, withdraw, getSignature, mintSTADA };

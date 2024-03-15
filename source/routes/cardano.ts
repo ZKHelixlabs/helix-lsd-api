@@ -7,5 +7,6 @@ const router = express.Router();
 router.post('/cardano/mint', controller.mint);
 router.post('/cardano/withdraw', controller.withdraw);
 router.get('/cardano/get-signature/:evmAddress/:txid', controller.getSignature);
+router.post('/cardano/mintstada', controller.mintSTADA);
 
 export = router;
