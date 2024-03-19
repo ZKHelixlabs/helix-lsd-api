@@ -12,7 +12,8 @@ const wallets = (process.env.WALLETS as string).split(',').map(item => new ether
 
 const bridgeAddr = '0x8C9aC5e18adbD025305E398350aaa0d77806B9Cb';
 const bridgeAbi = [
-  'function orders(string memory cardanoAddress, uint256 orderId) public view returns (address, uint256, uint256, uint256)'
+  'function orders(string memory cardanoAddress, uint256 orderId) public view returns (address, uint256, uint256, uint256)',
+  'function claim(string memory cardanoAddress, uint256 orderId) external'
 ];
 
 const mint = async (req: Request, res: Response, next: NextFunction) => {
