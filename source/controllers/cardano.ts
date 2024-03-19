@@ -504,7 +504,7 @@ const mintSTADA = async (req: Request, res: Response, next: NextFunction) => {
           );
         }
 
-        const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.length == 1 && u.resolved.value.lovelaces >= 2_000_000n);
+        const beneficiaryWithStakeADAUTxO = (await cli.query.utxo({ address: beneficiaryWithStake })).find((u: UTxO) => u.resolved.value.map.length == 1 && u.resolved.value.lovelaces >= 3_000_000n);
 
         console.log('beneficiaryWithStakeADAUTxO: ', beneficiaryWithStakeADAUTxO?.resolved.value.toJson());
 
@@ -518,6 +518,9 @@ const mintSTADA = async (req: Request, res: Response, next: NextFunction) => {
 
         let tx = await cli.transaction.build({
           inputs: [
+            {
+              utxo: beneficiaryWithStakeADAUTxO
+            },
             {
               utxo: beneficiaryWithStakeHSTADAUTxO
             },
